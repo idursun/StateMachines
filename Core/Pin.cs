@@ -58,4 +58,11 @@ namespace StateMachine.Core
             m_propertyInfo.SetValue(Node, value, null);
         }
     }
+
+    public enum PinType
+    {
+        None,
+        Input,
+        Output
+    }
 }

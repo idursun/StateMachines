@@ -16,7 +16,6 @@ namespace StateMachine.Core
         public List<Tuple<Pin, Pin>> Connections { get; private set; }
         public ExecutionNode RootNode { get; set; }
 
-
         public void Add(MachineNode node)
         {
             if (node.Guid == Guid.Empty)
@@ -46,7 +45,6 @@ namespace StateMachine.Core
             ExecutionNode node = RootNode;
             while (node != null)
             {
-                //ValidateInputs(node);
                 EvaluateInputs(node);
                 node.Execute();
                 node = node.Next;
@@ -86,7 +84,6 @@ namespace StateMachine.Core
                 {
                     EvaluateInputs(connectedPin.Node);
                     ((Function)connectedPin.Node).Evaluate();
-
                     Remember(MakeCacheKey(connectedPin), connectedPin.Get());
                 }
             }
@@ -104,7 +101,6 @@ namespace StateMachine.Core
         {
             m_valueCache[key] = value;
         }
-
 
         private IEnumerable<Pin> GetConnectedPins(Pin input)
         {
