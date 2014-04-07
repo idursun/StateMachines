@@ -59,11 +59,4 @@ namespace StateMachine.Core
             }
         }
     }
-
-    public enum PinType
-    {
-        None,
-        Input,
-        Output
-    }
 }
