@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Linq;
 using StateMachine.Core;
+using StateMachine.Core.Utils;
 
 namespace StateMachine.Tests
 {
@@ -11,7 +12,7 @@ namespace StateMachine.Tests
          public void Test_Pin_Returns_a_Guid()
          {
              SampleNode sampleNode = new SampleNode();
-             Pin pin = sampleNode.Pin<SampleNode>(x => x.Output1);
+             Pin pin = sampleNode.Pin(x => x.Output1);
              Assert.That(pin, Is.Not.Null);
              Assert.That(pin.Name, Is.EqualTo("Output1"));
          }
@@ -20,8 +21,8 @@ namespace StateMachine.Tests
          public void Test_Pin_Returns_same_Guid()
          {
              SampleNode sampleNode = new SampleNode();
-             Pin pin1 = sampleNode.Pin<SampleNode>(x => x.Output1);
-             Pin pin2 = sampleNode.Pin<SampleNode>(x => x.Output1);
+             Pin pin1 = sampleNode.Pin(x => x.Output1);
+             Pin pin2 = sampleNode.Pin(x => x.Output1);
              Assert.That(pin1, Is.EqualTo(pin2));
          }
 
@@ -31,7 +32,7 @@ namespace StateMachine.Tests
              SampleNode sampleNode = new SampleNode();
              Assert.That(delegate
              {
-                 sampleNode.Pin<SampleNode>(x => x.GetData());
+                 sampleNode.Pin(x => x.GetData());
              }, Throws.Exception);
          }
 

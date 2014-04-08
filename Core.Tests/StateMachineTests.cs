@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using StateMachine.Core;
+using StateMachine.Core.Utils;
 
 namespace StateMachine.Tests
 {
@@ -27,7 +28,7 @@ namespace StateMachine.Tests
             MakeMessageNode node = new MakeMessageNode();
             Assert.That(delegate
             {
-                m_stateMachine.Connect(node.Pin<MakeMessageNode>(x => x.Input), null);
+                m_stateMachine.Connect(node.Pin(x => x.Input), null);
             }, Throws.InstanceOf<ArgumentNullException>());
         }
 
@@ -37,7 +38,7 @@ namespace StateMachine.Tests
             MakeMessageNode node = new MakeMessageNode();
             Assert.That(delegate
             {
-                m_stateMachine.Connect(node.Pin<MakeMessageNode>(x => x.Input), node.Pin<MakeMessageNode>(x => x.Input));
+                m_stateMachine.Connect(node.Pin(x => x.Input), node.Pin(x => x.Input));
             }, Throws.Exception);
         }
 
@@ -97,9 +98,9 @@ namespace StateMachine.Tests
 
             m_stateMachine.Add(executionNode);
             m_stateMachine.RootNode = executionNode;
-            m_stateMachine.Connect(concatFunction.Pin<ConcatFunction>(x => x.First), getMessage1Function.Pin<GetMessageFunction>(x => x.Message));
-            m_stateMachine.Connect(concatFunction.Pin<ConcatFunction>(x => x.Second), getMessage2Function.Pin<GetMessageFunction>(x => x.Message));
-            m_stateMachine.Connect(executionNode.Pin<MakeMessageNode>(x => x.Input), concatFunction.Pin<ConcatFunction>(x => x.Output));
+            m_stateMachine.Connect(concatFunction.Pin(x => x.First), getMessage1Function.Pin(x => x.Message));
+            m_stateMachine.Connect(concatFunction.Pin(x => x.Second), getMessage2Function.Pin(x => x.Message));
+            m_stateMachine.Connect(executionNode.Pin(x => x.Input), concatFunction.Pin(x => x.Output));
 
             m_stateMachine.Signal();
             Assert.That(executionNode.Output, Is.EqualTo("Hello World !!!"));
