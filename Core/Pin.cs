@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -56,6 +57,11 @@ namespace StateMachine.Core
         public void Set(object value)
         {
             m_propertyInfo.SetValue(Node, value, null);
+        }
+
+        public Type GetPropertyType()
+        {
+            return m_propertyInfo.PropertyType;
         }
     }
 
