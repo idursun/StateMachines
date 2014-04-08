@@ -44,38 +44,19 @@ namespace StateMachine.Core
                 throw new Exception("No root node.");
 
             ExecutionNode node = RootNode;
+            ExecutionContext context = new ExecutionContext();
             while (node != null)
             {
-                EvaluateInputs(node);
+                EvaluateInputs(node, context);
                 node.Execute();
                 node = node.Next;
             }
         }
 
-        private void AssignInputs(MachineNode node)
+        private void EvaluateInputs(MachineNode node, ExecutionContext context)
         {
-            var pins = node.GetPins(PinType.Input);
-            foreach (var pin in pins)
-            {
-                IEnumerable<Pin> connectedPins = GetConnectedPins(pin);
-                foreach (var connectedPin in connectedPins)
-                {
-                    string key = MakeCacheKey(connectedPin);
-                    if (m_valueCache.ContainsKey(key))
-                    {
-                        pin.Set(m_valueCache[key]);
-                    }
-                    else
-                    {
-                        throw new Exception("Value is not evaluated");
-                    }
-                }
-            }
-        }
-
-        private void EvaluateInputs(MachineNode node)
-        {
-            if (node == null) throw new ArgumentNullException("node");
+            if (node == null)
+                throw new ArgumentNullException("node");
 
             var nodeInputPins = node.GetPins(PinType.Input);
             foreach (var inputPin in nodeInputPins)
@@ -83,25 +64,30 @@ namespace StateMachine.Core
                 var connectedPins = this.GetConnectedPins(inputPin);
                 foreach (var connectedPin in connectedPins)
                 {
-                    EvaluateInputs(connectedPin.Node);
+                    EvaluateInputs(connectedPin.Node, context);
                     ((Function)connectedPin.Node).Evaluate();
-                    Remember(MakeCacheKey(connectedPin), connectedPin.Get());
+                    context.Set(connectedPin, connectedPin.GetValue());
                 }
             }
 
-            AssignInputs(node);
+            AssignInputs(node, context);
         }
 
-        private static string MakeCacheKey(Pin pin)
+        private void AssignInputs(MachineNode node, ExecutionContext context)
         {
-            if (pin == null) throw new ArgumentNullException("pin");
-            return pin.Node.GetType() + "" + pin.Node.Guid.ToString() + "::" + pin.Name;
+            var pins = node.GetPins(PinType.Input);
+            foreach (var pin in pins)
+            {
+                IEnumerable<Pin> connectedPins = GetConnectedPins(pin);
+                foreach (var connectedPin in connectedPins)
+                {
+                    object o = context.Get(connectedPin);
+                    pin.Set(o);
+                }
+            }
         }
 
-        private void Remember(string key, object value)
-        {
-            m_valueCache[key] = value;
-        }
+
 
         private IEnumerable<Pin> GetConnectedPins(Pin input)
         {
@@ -114,7 +100,6 @@ namespace StateMachine.Core
             }
         }
 
-        private readonly Dictionary<string, object> m_valueCache = new Dictionary<string, object>();
-
+        //private readonly Dictionary<string, object> m_Variables = new Dictionary<string, object>();
     }
 }

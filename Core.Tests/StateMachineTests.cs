@@ -52,26 +52,6 @@ namespace StateMachine.Tests
             Assert.That(makeMessageNode.Guid, Is.Not.EqualTo(Guid.Empty));
         }
 
-        //[Test]
-        //public void Test_GetConnectedPins()
-        //{
-        //    var executionNode = new MakeMessageNode();
-        //    var concatFunction = new ConcatFunction();
-        //    var getMessage1Function = new GetMessageFunction();
-        //    var getMessage2Function = new GetMessageFunction();
-        //    m_stateMachine.Add(concatFunction);
-        //    m_stateMachine.Add(getMessage1Function);
-        //    m_stateMachine.Add(getMessage2Function);
-
-        //    m_stateMachine.Add(executionNode);
-        //    m_stateMachine.RootNode = executionNode;
-        //    m_stateMachine.Connect(concatFunction.Pin<ConcatFunction>(x => x.First), getMessage1Function.Pin<GetMessageFunction>(x => x.Message));
-        //    m_stateMachine.Connect(concatFunction.Pin<ConcatFunction>(x => x.Second), getMessage2Function.Pin<GetMessageFunction>(x => x.Message));
-        //    m_stateMachine.Connect(concatFunction.Pin<MakeMessageNode>(x => x.Input), getMessage2Function.Pin<ConcatFunction>(x => x.Output));
-
-        //    Assert.That(executionNode.Output, Is.EqualTo("Hello World"));
-        //}
-
         [Test]
         public void Test_Signal_SignalsRootNode()
         {

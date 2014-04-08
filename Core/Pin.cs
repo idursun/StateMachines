@@ -48,7 +48,7 @@ namespace StateMachine.Core
             return !Equals(left, right);
         }
 
-        public object Get()
+        public object GetValue()
         {
             object result = m_propertyInfo.GetValue(Node, null);
             return result;
