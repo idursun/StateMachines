@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using StateMachine.Core.Utils;
 
 namespace StateMachine.Core
 {
@@ -8,11 +7,8 @@ namespace StateMachine.Core
     {
         public ExecutionContext()
         {
-            InstructionPointer = Guid.Empty;
             m_Variables = new Dictionary<string, object>();
         }
-
-        public Guid InstructionPointer { get; set; }
 
         public void Set(Pin pin, object value)
         {
@@ -38,7 +34,6 @@ namespace StateMachine.Core
                 throw new ArgumentNullException("pin");
             return pin.Node.GetType() + "" + pin.Node.Guid.ToString() + "::" + pin.Name;
         }
-
 
         private readonly Dictionary<string, object> m_Variables;
     }

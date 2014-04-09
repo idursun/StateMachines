@@ -49,7 +49,7 @@ namespace StateMachine.Core
             {
                 EvaluateInputs(node, context);
                 node.Execute();
-                node = node.Next;
+                //node = node.Next;
             }
         }
 
@@ -86,8 +86,6 @@ namespace StateMachine.Core
                 }
             }
         }
-
-
 
         private IEnumerable<Pin> GetConnectedPins(Pin input)
         {
