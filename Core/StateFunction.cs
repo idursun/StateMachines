@@ -1,6 +1,6 @@
 ﻿namespace StateMachine.Core
 {
-    public abstract class Function : MachineNode
+    public abstract class StateFunction : MachineNode
     {
         public abstract void Evaluate();
     }

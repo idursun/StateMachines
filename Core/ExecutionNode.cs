@@ -1,7 +1,13 @@
 ﻿namespace StateMachine.Core
 {
-    public abstract class ExecutionNode : MachineNode
+    public interface IExecutable
     {
-        public abstract void Execute();
+        void Execute(IStateExecutionContext context);
+    }
+
+    public abstract class ExecutionNode : MachineNode, IExecutable
+    {
+        public abstract void Execute(IStateExecutionContext context);
+
     }
 }

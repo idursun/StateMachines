@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using StateMachine.Core.Utils;
 
 namespace StateMachine.Core
 {
-    public class StateMachine
+    public class StateMachineGraph
     {
-
-        public StateMachine()
+        public StateMachineGraph()
         {
             Nodes = new List<MachineNode>();
             Connections = new List<Tuple<Pin, Pin>>();
@@ -44,50 +42,13 @@ namespace StateMachine.Core
                 throw new Exception("No root node.");
 
             ExecutionNode node = RootNode;
-            ExecutionContext context = new ExecutionContext();
-            while (node != null)
-            {
-                EvaluateInputs(node, context);
-                node.Execute();
-                //node = node.Next;
-            }
+            StateExecutionContext context = new StateExecutionContext(this);
+            context.EvaluateInputs(node);
+            context.Execute(node);
         }
 
-        private void EvaluateInputs(MachineNode node, ExecutionContext context)
-        {
-            if (node == null)
-                throw new ArgumentNullException("node");
 
-            var nodeInputPins = node.GetPins(PinType.Input);
-            foreach (var inputPin in nodeInputPins)
-            {
-                var connectedPins = this.GetConnectedPins(inputPin);
-                foreach (var connectedPin in connectedPins)
-                {
-                    EvaluateInputs(connectedPin.Node, context);
-                    ((Function)connectedPin.Node).Evaluate();
-                    context.Set(connectedPin, connectedPin.GetValue());
-                }
-            }
-
-            AssignInputs(node, context);
-        }
-
-        private void AssignInputs(MachineNode node, ExecutionContext context)
-        {
-            var pins = node.GetPins(PinType.Input);
-            foreach (var pin in pins)
-            {
-                IEnumerable<Pin> connectedPins = GetConnectedPins(pin);
-                foreach (var connectedPin in connectedPins)
-                {
-                    object o = context.Get(connectedPin);
-                    pin.Set(o);
-                }
-            }
-        }
-
-        private IEnumerable<Pin> GetConnectedPins(Pin input)
+        public IEnumerable<Pin> GetConnectedPins(Pin input)
         {
             foreach (var connection in Connections)
             {

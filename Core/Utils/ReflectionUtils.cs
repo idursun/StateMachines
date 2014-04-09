@@ -51,7 +51,7 @@ namespace StateMachine.Core.Utils
                     throw new Exception("Pin type has to be either Input or Output");
             }
 
-            PropertyInfo[] propertyInfos = typeof(T).GetProperties();
+            PropertyInfo[] propertyInfos = node.GetType().GetProperties();
             foreach (var propertyInfo in propertyInfos)
             {
                 var customAttributes = propertyInfo.GetCustomAttributes(type, true);
@@ -85,7 +85,5 @@ namespace StateMachine.Core.Utils
                 Name = propertyName
             };
         }
-
-
     }
 }

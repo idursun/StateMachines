@@ -9,11 +9,11 @@ namespace StateMachine.Tests
     [TestFixture]
     public class StateMachineTests
     {
-        private Core.StateMachine m_stateMachine;
+        private Core.StateMachineGraph m_stateMachine;
         [SetUp]
         public void Setup()
         {
-            m_stateMachine = new Core.StateMachine();
+            m_stateMachine = new Core.StateMachineGraph();
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace StateMachine.Tests
 
             m_stateMachine.Signal();
 
-            executionNode.Verify(x => x.Execute());
+            executionNode.Verify(x => x.Execute(It.IsAny<StateExecutionContext>()));
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace StateMachine.Tests
         [Output]
         public string Output { get; set; }
 
-        public override void Execute()
+        public override void Execute(IStateExecutionContext context)
         {
             if (Input == null)
                 throw new Exception("Input value was not set");

@@ -21,6 +21,8 @@ namespace StateMachine.Designer
         {
             InitializeComponent();
 
+            Type[] exportedTypes = typeof(StateFunction).Assembly.GetExportedTypes();
+
             graphControl1.CompatibilityStrategy = new AlwaysCompatible();
             graphControl1.ConnectionAdding += GraphControl1OnConnectionAdding;
             graphControl1.ConnectionAdded += GraphControl1OnConnectionAdded;

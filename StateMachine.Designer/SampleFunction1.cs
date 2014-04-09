@@ -4,7 +4,7 @@ using StateMachine.Core;
 
 namespace StateMachine.Designer
 {
-    public class SampleFunction1 : Function
+    public class SampleFunction1 : StateFunction
     {
         [Input]
         public string First { get; set; }
@@ -19,7 +19,7 @@ namespace StateMachine.Designer
         }
     }  
     
-    public class RandomIntegerFunction : Function
+    public class RandomIntegerFunction : StateFunction
     {
         [Input]
         public int Min { get; set; }
@@ -42,7 +42,7 @@ namespace StateMachine.Designer
         [Input]
         public string Message { get; set; }
 
-        public override void Execute()
+        public override void Execute(IStateExecutionContext context)
         {
             MessageBox.Show(Message);
         }
