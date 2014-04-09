@@ -9,7 +9,7 @@ namespace StateMachine.Tests
     public class MachineNodeTests
     {
          [Test]
-         public void Test_Pin_Returns_a_Guid()
+         public void Test_Pin_Returns_a_Pin()
          {
              SampleNode sampleNode = new SampleNode();
              Pin pin = sampleNode.Pin(x => x.Output1);
@@ -17,15 +17,6 @@ namespace StateMachine.Tests
              Assert.That(pin.Name, Is.EqualTo("Output1"));
          }
         
-        [Test]
-         public void Test_Pin_Returns_same_Guid()
-         {
-             SampleNode sampleNode = new SampleNode();
-             Pin pin1 = sampleNode.Pin(x => x.Output1);
-             Pin pin2 = sampleNode.Pin(x => x.Output1);
-             Assert.That(pin1, Is.EqualTo(pin2));
-         }
-
          [Test]
          public void Test_Pin_Throws_If_expression_is_not_a_property()
          {
@@ -55,6 +46,16 @@ namespace StateMachine.Tests
             Assert.That(inputs, Is.Not.Null);
             Assert.That(inputs.Select(x => x.Name), Is.EquivalentTo(new[] {"Output1"}));
         } 
+
+        [Test]
+        public void Test_GetPins_Returns_only_execute()
+        {
+            SampleNode sampleNode = new SampleNode();
+            var inputs = sampleNode.GetPins(PinType.Execute);
+
+            Assert.That(inputs, Is.Not.Null);
+            Assert.That(inputs.Select(x => x.Name), Is.EquivalentTo(new[] {"Exec1", "Exec2"}));
+        } 
         
         [Test]
         public void Test_GetPins_Throws_If_pintype_is_none()
@@ -76,6 +77,9 @@ namespace StateMachine.Tests
 
         [Output]
         public string Output1 { get; set; }
+
+        public IExecutable Exec1 { get; set; }
+        public IExecutable Exec2 { get; set; }
 
         public string GetData()
         {

@@ -42,6 +42,8 @@ namespace StateMachine.Designer
         [Input]
         public string Message { get; set; }
 
+        public IExecutable Next { get; set; }
+
         public override void Execute(IStateExecutionContext context)
         {
             MessageBox.Show(Message);

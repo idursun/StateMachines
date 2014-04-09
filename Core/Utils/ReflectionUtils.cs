@@ -19,6 +19,13 @@ namespace StateMachine.Core.Utils
                 case PinType.Output:
                     attributeType = typeof(OutputAttribute);
                     break;
+                case PinType.Execute:
+                    IEnumerable<PropertyInfo> infos = type.GetProperties().Where(x => x.PropertyType == typeof (IExecutable));
+                    foreach (var propertyInfo in infos)
+                    {
+                        yield return new Pin(propertyInfo) { Name = propertyInfo.Name};
+                    }
+                    yield break;
                 default:
                     throw new Exception("Pin type has to be either Input or Output");
             }
@@ -38,29 +45,11 @@ namespace StateMachine.Core.Utils
         public static IEnumerable<Pin> GetPins<T>(this T node, PinType pinType)
             where T: MachineNode
         {
-            Type type;
-            switch (pinType)
+            Type type1 = node.GetType();
+            foreach (var pin in GetPins(type1, pinType))
             {
-                case PinType.Input:
-                    type = typeof(InputAttribute);
-                    break;
-                case PinType.Output:
-                    type = typeof(OutputAttribute);
-                    break;
-                default:
-                    throw new Exception("Pin type has to be either Input or Output");
-            }
-
-            PropertyInfo[] propertyInfos = node.GetType().GetProperties();
-            foreach (var propertyInfo in propertyInfos)
-            {
-                var customAttributes = propertyInfo.GetCustomAttributes(type, true);
-                if (customAttributes.Length > 0)
-                    yield return new Pin(propertyInfo)
-                    {
-                        Name = propertyInfo.Name,
-                        Node = node
-                    };
+                pin.Node = node;
+                yield return pin;
             }
         }
 

@@ -80,39 +80,94 @@ namespace Graph
 
 		private static Pen BorderPen = new Pen(Color.FromArgb(64, 64, 64));
 
-		static void RenderConnector(Graphics graphics, RectangleF bounds, RenderState state)
+		static void RenderConnector(Graphics graphics, NodeConnector nodeConnector, RenderState renderState)
 		{
-			using (var brush = new SolidBrush(GetArrowLineColor(state)))
-			{
-				graphics.FillEllipse(brush, bounds);
-			}
-			
-			if (state == RenderState.None)
-			{
-				graphics.DrawEllipse(Pens.Black, bounds);
-			} else
-			// When we're compatible, but not dragging from this node we render a highlight
-			if ((state & (RenderState.Compatible | RenderState.Dragging)) == RenderState.Compatible) 
-			{
-				// First draw the normal black border
-				graphics.DrawEllipse(Pens.Black, bounds);
-
-				// Draw an additional highlight around the connector
-				RectangleF highlightBounds = new RectangleF(bounds.X,bounds.Y,bounds.Width,bounds.Height);
-				highlightBounds.Width += 10;
-				highlightBounds.Height += 10;
-				highlightBounds.X -= 5;
-				highlightBounds.Y -= 5;
-				graphics.DrawEllipse(Pens.OrangeRed, highlightBounds);
-			} else
-			{
-				graphics.DrawArc(Pens.Black, bounds, 90, 180);
-				using (var pen = new Pen(GetArrowLineColor(state)))
-				{
-					graphics.DrawArc(pen, bounds, 270, 180);
-				}
-			}			
+            if (nodeConnector.ConnectorType == NodeConnectorType.Exec)
+                RenderExecConnector(graphics, nodeConnector, renderState);
+            //else if (nodeConnector.ConnectorType == NodeConnectorType.Array)
+            //    RenderArrayConnector(graphics, nodeConnector, renderState);
+            else if (nodeConnector.ConnectorType == NodeConnectorType.Value)
+                RenderValueConnector(graphics, nodeConnector, renderState);
 		}
+
+        private static void RenderValueConnector(Graphics graphics, NodeConnector nodeConnector, RenderState renderState)
+        {
+            RectangleF bounds = nodeConnector.bounds;
+            var state = renderState;
+            using (var brush = new SolidBrush(GetArrowLineColor(state)))
+            {
+                graphics.FillEllipse(brush, bounds);
+            }
+
+            if (state == RenderState.None)
+            {
+                graphics.DrawEllipse(Pens.Black, bounds);
+            }
+            else
+                // When we're compatible, but not dragging from this node we render a highlight
+                if ((state & (RenderState.Compatible | RenderState.Dragging)) == RenderState.Compatible)
+                {
+                    // First draw the normal black border
+                    graphics.DrawEllipse(Pens.Black, bounds);
+
+                    // Draw an additional highlight around the connector
+                    RectangleF highlightBounds = new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+                    highlightBounds.Width += 10;
+                    highlightBounds.Height += 10;
+                    highlightBounds.X -= 5;
+                    highlightBounds.Y -= 5;
+                    graphics.DrawEllipse(Pens.OrangeRed, highlightBounds);
+                }
+                else
+                {
+                    graphics.DrawArc(Pens.Black, bounds, 90, 180);
+                    using (var pen = new Pen(GetArrowLineColor(state)))
+                    {
+                        graphics.DrawArc(pen, bounds, 270, 180);
+                    }
+                }			
+
+        }
+
+        private static void RenderExecConnector(Graphics graphics, NodeConnector nodeConnector, RenderState renderState)
+        {
+            RectangleF bounds = nodeConnector.bounds;
+            var state = renderState;
+            using (var brush = new SolidBrush(GetArrowLineColor(state)))
+            {
+                graphics.FillRectangle(brush, bounds);
+            }
+
+            if (state == RenderState.None)
+            {
+                graphics.DrawRectangle(Pens.Black, Rectangle.Round(bounds));
+            }
+            else
+                // When we're compatible, but not dragging from this node we render a highlight
+                if ((state & (RenderState.Compatible | RenderState.Dragging)) == RenderState.Compatible)
+                {
+                    // First draw the normal black border
+                    graphics.DrawRectangle(Pens.Black, Rectangle.Round(bounds));
+
+                    // Draw an additional highlight around the connector
+                    RectangleF highlightBounds = new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+                    highlightBounds.Width += 10;
+                    highlightBounds.Height += 10;
+                    highlightBounds.X -= 5;
+                    highlightBounds.Y -= 5;
+                    graphics.DrawRectangle(Pens.OrangeRed, Rectangle.Round(highlightBounds));
+                }
+                else
+                {
+                    graphics.DrawRectangle(Pens.Black, Rectangle.Round(bounds));
+                    //using (var pen = new Pen(GetArrowLineColor(state)))
+                    //{
+                    //    graphics.DrawArc(pen, bounds, 270, 180);
+                    //}
+                }
+
+        }
+
 
 		static void RenderArrow(Graphics graphics, RectangleF bounds, RenderState connectionState)
 		{
@@ -285,30 +340,33 @@ namespace Graph
 			*/
 			var itemPosition = position;
 			itemPosition.X += connectorSize + (int)GraphConstants.HorizontalSpacing;
-			if (node.Collapsed)
-			{
-				bool inputConnected = false;
-				var inputState	= RenderState.None;
-				var outputState = node.outputState;
-				foreach (var connection in node.connections)
-				{
-					if (connection.To.Node == node)
-					{
-						inputState |= connection.state;
-						inputConnected = true;
-					}
-					if (connection.From.Node == node)
-						outputState |= connection.state | RenderState.Connected;
-				}
+            //if (node.Collapsed)
+            //{
+            //    bool inputConnected = false;
+            //    var inputState	= RenderState.None;
+            //    var outputState = node.outputState;
+            //    foreach (var connection in node.connections)
+            //    {
+            //        if (connection.To.Node == node)
+            //        {
+            //            inputState |= connection.state;
+            //            inputConnected = true;
+            //        }
+            //        if (connection.From.Node == node)
+            //            outputState |= connection.state | RenderState.Connected;
+            //    }
 
-				RenderItem(graphics, new SizeF(node.bounds.Width - GraphConstants.NodeExtraWidth, 0), node.titleItem, itemPosition);
-				if (node.inputConnectors.Count > 0)
-					RenderConnector(graphics, node.inputBounds, node.inputState);
-				if (node.outputConnectors.Count > 0)
-					RenderConnector(graphics, node.outputBounds, outputState);
-				if (inputConnected)
-					RenderArrow(graphics, node.inputBounds, inputState);
-			} else
+            //    RenderItem(graphics, new SizeF(node.bounds.Width - GraphConstants.NodeExtraWidth, 0), node.titleItem, itemPosition);
+            //    if (node.inputConnectors.Count > 0)
+            //        RenderConnector(graphics, node.inputBounds, node.inputState);
+
+            //    if (node.outputConnectors.Count > 0)
+            //        RenderConnector(graphics, node.outputBounds, outputState);
+
+            //    if (inputConnected)
+            //        RenderArrow(graphics, node.inputBounds, inputState);
+            //} 
+            //else
 			{
 				node.inputBounds	= Rectangle.Empty;
 				node.outputBounds	= Rectangle.Empty;
@@ -333,9 +391,7 @@ namespace Graph
 								}
 							}
 
-							RenderConnector(graphics, 
-											inputConnector.bounds,
-											inputConnector.state);
+							RenderConnector(graphics, inputConnector, state);
 
 							if (connected)
 								RenderArrow(graphics, inputConnector.bounds, state);
@@ -352,7 +408,7 @@ namespace Graph
 								if (connection.From == outputConnector)
 									state |= connection.state | RenderState.Connected;
 							}
-							RenderConnector(graphics, outputConnector.bounds, state);
+							RenderConnector(graphics, outputConnector, state);
 						}
 					}
 					itemPosition.Y += item.bounds.Height + GraphConstants.ItemSpacing;

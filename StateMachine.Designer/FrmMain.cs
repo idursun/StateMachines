@@ -21,8 +21,6 @@ namespace StateMachine.Designer
         {
             InitializeComponent();
 
-            Type[] exportedTypes = typeof(StateFunction).Assembly.GetExportedTypes();
-
             graphControl1.CompatibilityStrategy = new AlwaysCompatible();
             graphControl1.ConnectionAdding += GraphControl1OnConnectionAdding;
             graphControl1.ConnectionAdded += GraphControl1OnConnectionAdded;
@@ -42,25 +40,29 @@ namespace StateMachine.Designer
         private void CreateTypeNodes()
         {
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
-            var enumerable = types.Where(x => typeof(MachineNode).IsAssignableFrom(x)).ToList();
-            foreach (var type in enumerable)
+            var nodeType = types.Where(x => typeof(MachineNode).IsAssignableFrom(x)).ToList();
+            foreach (var type in nodeType)
             {
                 Node node = new Node(type.FullName);
+
+                if (typeof (IExecutable).IsAssignableFrom(type))
+                {
+                    NodeLabelItem item = new NodeLabelItem("Exec", true, false);
+                    item.Input.ConnectorType = NodeConnectorType.Exec;
+                    node.AddItem(item);
+                }
+
+                //execute pins
+                foreach (var pin in type.GetPins(PinType.Execute))
+                {
+                    NodeLabelItem item = new NodeLabelItem(pin.Name, false, true);
+                    item.Output.ConnectorType = NodeConnectorType.Exec;
+                    node.AddItem(item);
+                }
+
                 foreach (var pin in type.GetPins(PinType.Input))
                 {
-                    Type propertyType = pin.GetPropertyType();
-                    NodeItem item;
-                    if (propertyType == typeof (String))
-                    {
-                        NodeTextBoxItem nodeLabelItem = new NodeTextBoxItem(pin.Name, true, false);
-                        item = nodeLabelItem;
-                    }
-                    else
-                    {
-                        NodeLabelItem nodeLabelItem = new NodeLabelItem(pin.Name, true, false);
-                        item = nodeLabelItem;
-                    }
-                    item.Tag = propertyType;
+                    NodeLabelItem item = new NodeLabelItem(pin.Name, true, false);
                     node.AddItem(item);
                 }
 

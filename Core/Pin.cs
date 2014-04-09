@@ -69,6 +69,7 @@ namespace StateMachine.Core
     {
         None,
         Input,
-        Output
+        Output,
+        Execute
     }
 }

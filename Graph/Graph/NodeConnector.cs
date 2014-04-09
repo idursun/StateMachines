@@ -38,7 +38,7 @@ namespace Graph
 		public NodeItem			Item			{ get; private set; }
 		// Set to true if this NodeConnector can be connected to
 		public bool				Enabled			{ get; internal set; }
-		
+        public NodeConnectorType ConnectorType { get; set; }
 		// Iterates through all the connectors connected to this connector
 		public IEnumerable<NodeConnection> Connectors
 		{
