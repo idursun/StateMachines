@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachine.Core", "Core\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachine.Designer", "StateMachine.Designer\StateMachine.Designer.csproj", "{CB4254D7-37EE-4B4C-8414-B58D885E8898}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graph", "Graph\Graph\Graph.csproj", "{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,16 @@ Global
 		{CB4254D7-37EE-4B4C-8414-B58D885E8898}.Release|Mixed Platforms.Build.0 = Release|x86
 		{CB4254D7-37EE-4B4C-8414-B58D885E8898}.Release|x86.ActiveCfg = Release|x86
 		{CB4254D7-37EE-4B4C-8414-B58D885E8898}.Release|x86.Build.0 = Release|x86
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

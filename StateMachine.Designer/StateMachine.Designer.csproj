@@ -55,9 +55,6 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Graph">
-      <HintPath>Dependencies\Graph.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -103,12 +100,13 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Dependencies\Graph.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Core\StateMachine.Core.csproj">
       <Project>{813BAE62-4233-4B01-8896-80C40990E866}</Project>
       <Name>StateMachine.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Graph\Graph\Graph.csproj">
+      <Project>{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}</Project>
+      <Name>Graph</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
