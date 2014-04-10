@@ -36,14 +36,15 @@
             // 
             this.graphControl1.BackColor = System.Drawing.Color.Gray;
             this.graphControl1.CompatibilityStrategy = alwaysCompatible1;
+            this.graphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.graphControl1.FocusElement = null;
             this.graphControl1.HighlightCompatible = false;
             this.graphControl1.LargeGridStep = 0F;
             this.graphControl1.LargeStepGridColor = System.Drawing.Color.LightGray;
-            this.graphControl1.Location = new System.Drawing.Point(12, 12);
+            this.graphControl1.Location = new System.Drawing.Point(0, 0);
             this.graphControl1.Name = "graphControl1";
             this.graphControl1.ShowLabels = false;
-            this.graphControl1.Size = new System.Drawing.Size(644, 439);
+            this.graphControl1.Size = new System.Drawing.Size(668, 454);
             this.graphControl1.SmallGridStep = 0F;
             this.graphControl1.SmallStepGridColor = System.Drawing.Color.Gray;
             this.graphControl1.TabIndex = 0;

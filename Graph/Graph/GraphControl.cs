@@ -1552,7 +1552,8 @@ namespace Graph
 										SetFlag(DragElement, RenderState.Incompatible, true);
 									} else
 									{
-										SetFlag(DragElement, (destinationConnector.state & (RenderState.Compatible | RenderState.Incompatible)), true);
+                                        //SetFlag(DragElement, (destinationConnector.state & (RenderState.Compatible | RenderState.Incompatible)), true);
+										SetFlag(DragElement, (destinationConnector.state | (RenderState.Compatible)), true);
 									}
 								}
 							}
