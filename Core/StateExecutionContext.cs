@@ -20,6 +20,7 @@ namespace StateMachine.Core
 
         public void Execute(IExecutable node)
         {
+            EvaluateInputs(node as MachineNode);
             node.Execute(this);
         }
 

@@ -9,27 +9,12 @@ namespace StateMachine.Tests
     [TestFixture]
     public class StateMachineTests
     {
-        private Core.StateMachineGraph m_stateMachine;
+        private StateMachineGraph m_stateMachine;
+
         [SetUp]
         public void Setup()
         {
-            m_stateMachine = new Core.StateMachineGraph();
-        }
-
-        [Test]
-        public void Test_Throws_WhenNoRootNodeIsSet()
-        {
-            Assert.That(m_stateMachine.Signal, Throws.Exception);
-        }
-
-        [Test]
-        public void Test_Connect_Throws_IfPinIsNull()
-        {
-            MakeMessageNode node = new MakeMessageNode();
-            Assert.That(delegate
-            {
-                m_stateMachine.Connect(node.Pin(x => x.Input), null);
-            }, Throws.InstanceOf<ArgumentNullException>());
+            m_stateMachine = new StateMachineGraph();
         }
 
         [Test]
@@ -42,7 +27,6 @@ namespace StateMachine.Tests
             }, Throws.Exception);
         }
 
-
         [Test]
         public void Test_Add_Sets_Guid()
         {
@@ -53,39 +37,30 @@ namespace StateMachine.Tests
         }
 
         [Test]
-        public void Test_Signal_SignalsRootNode()
-        {
-            var executionNode = new Mock<ExecutionNode>();
-
-            m_stateMachine.Add(executionNode.Object);
-            m_stateMachine.RootNode = executionNode.Object;
-
-            m_stateMachine.Signal();
-
-            executionNode.Verify(x => x.Execute(It.IsAny<StateExecutionContext>()));
-        }
-
-        [Test]
         public void Test_Signal_ProvidesInputValues()
         {
+            var initEvent = new InitializeEvent();
             var executionNode = new MakeMessageNode();
             var concatFunction = new ConcatFunction();
             var getMessage1Function = new GetMessageFunction("Hello");
             var getMessage2Function = new GetMessageFunction("World");
+
+            m_stateMachine.Add(initEvent);
             m_stateMachine.Add(concatFunction);
             m_stateMachine.Add(getMessage1Function);
             m_stateMachine.Add(getMessage2Function);
-
             m_stateMachine.Add(executionNode);
-            m_stateMachine.RootNode = executionNode;
+
             m_stateMachine.Connect(concatFunction.Pin(x => x.First), getMessage1Function.Pin(x => x.Message));
             m_stateMachine.Connect(concatFunction.Pin(x => x.Second), getMessage2Function.Pin(x => x.Message));
             m_stateMachine.Connect(executionNode.Pin(x => x.Input), concatFunction.Pin(x => x.Output));
+            m_stateMachine.Connect(initEvent.Pin(x => x.Fired), executionNode);
 
-            m_stateMachine.Signal();
+            m_stateMachine.Compile();
+            m_stateMachine.PublishEvent(new InitializeEvent());
+
             Assert.That(executionNode.Output, Is.EqualTo("Hello World !!!"));
         }
-
     }
 
     public class GetMessageFunction: StateFunction

@@ -9,7 +9,7 @@ namespace StateMachine.Tests
     public class MachineNodeTests
     {
          [Test]
-         public void Test_Pin_Returns_a_Pin()
+         public void Test_Pin_Returns_not_Null()
          {
              SampleNode sampleNode = new SampleNode();
              Pin pin = sampleNode.Pin(x => x.Output1);
