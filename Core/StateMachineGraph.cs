@@ -17,7 +17,6 @@ namespace StateMachine.Core
         public List<Tuple<Pin, Pin>> Connections { get; private set; }
         public List<Tuple<Pin, IExecutable>> FlowConnections { get; private set; }
 
-
         public void Add(MachineNode node)
         {
             if (node.Guid == Guid.Empty)
@@ -59,12 +58,12 @@ namespace StateMachine.Core
             m_compiled = true;
         }
 
-        public void PublishEvent(StateEvent stateEvent)
+        public void PublishEvent(StateEventData stateEventData)
         {
             if (!m_compiled)
                 throw new Exception("graph is not compiled");
 
-            events.Enqueue(stateEvent);
+            events.Enqueue(stateEventData);
 
             Signal();
         }
@@ -74,15 +73,28 @@ namespace StateMachine.Core
             if (events.Count == 0)
                 return;
 
-            StateEvent stateEvent = events.Dequeue();
-            var matchingNodes = Nodes.Where(x => x.GetType() == stateEvent.GetType());
+            StateEventData stateEventData = events.Dequeue();
+
+            IEnumerable<StateEventSink> matchingEventSinks = EventSinksNodes().Where(x => x.Handles(stateEventData)).ToList();
 
             StateExecutionContext context = new StateExecutionContext(this);
-            foreach (var matchingNode in matchingNodes)
+            //first set data for every sink
+            foreach (var matchingNode in matchingEventSinks)
+            {
+                matchingNode.SetEventData(stateEventData);
+            }
+
+            // and then execute each node
+            foreach (var matchingNode in matchingEventSinks)
             {
                 context.EvaluateInputs(matchingNode);
-                context.Execute(matchingNode as IExecutable);
+                context.Execute(matchingNode);
             }
+        }
+
+        private IEnumerable<StateEventSink> EventSinksNodes()
+        {
+            return Nodes.Where(x => x is StateEventSink).Cast<StateEventSink>().ToList();
         }
 
         public IEnumerable<Pin> GetConnectedPins(Pin input)
@@ -96,7 +108,7 @@ namespace StateMachine.Core
             }
         }
 
-        private Queue<StateEvent>  events = new Queue<StateEvent>();
+        private readonly Queue<StateEventData> events = new Queue<StateEventData>();
         private bool m_compiled;
         //private readonly Dictionary<string, object> m_Variables = new Dictionary<string, object>();
     }

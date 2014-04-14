@@ -328,7 +328,10 @@ namespace Graph
 					graphics.FillPath(Brushes.LightSteelBlue, path);
 				} else
 				{
-					graphics.FillPath(Brushes.LightGray, path);
+				    using (SolidBrush brush = new SolidBrush(node.BackColor))
+				    {
+                        graphics.FillPath(brush, path);
+				    }
 				}
 				graphics.DrawPath(BorderPen, path);
 			}

@@ -168,5 +168,7 @@ namespace Graph
 		}
 
 		public ElementType ElementType { get { return ElementType.Node; } }
+
+	    public Color BackColor { get; set; }
 	}
 }

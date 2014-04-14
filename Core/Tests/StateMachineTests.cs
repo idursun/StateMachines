@@ -39,7 +39,7 @@ namespace StateMachine.Tests
         [Test]
         public void Test_Signal_ProvidesInputValues()
         {
-            var initEvent = new InitializeEvent();
+            var initEvent = new InitializeEventSink();
             var executionNode = new MakeMessageNode();
             var concatFunction = new ConcatFunction();
             var getMessage1Function = new GetMessageFunction("Hello");
@@ -57,9 +57,9 @@ namespace StateMachine.Tests
             m_stateMachine.Connect(initEvent.Pin(x => x.Fired), executionNode);
 
             m_stateMachine.Compile();
-            m_stateMachine.PublishEvent(new InitializeEvent());
+            m_stateMachine.PublishEvent(StateEventData.Empty);
 
-            Assert.That(executionNode.Output, Is.EqualTo("Hello World !!!"));
+            Assert.That(executionNode.Output, Is.EqualTo("Hello World !!!"), "Message is not correct");
         }
     }
 

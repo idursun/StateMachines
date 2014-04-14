@@ -11,20 +11,38 @@ namespace StateMachine.Core
         public Guid Guid { get; set; }
     }
 
-    public abstract class StateEvent : MachineNode, IExecutable
+    public class StateEventData
     {
-        public string Name { get; set; }
-
-        public abstract void Execute(IStateExecutionContext context);
+        public static readonly StateEventData Empty = new StateEventData();
     }
 
-    public class InitializeEvent : StateEvent
+    public abstract class StateEventSink: MachineNode, IExecutable
+    {
+        public string Name { get; set; }
+        public abstract void Execute(IStateExecutionContext context);
+        public virtual Type EventDataType { get { return typeof (StateEventData); }}
+
+        public virtual void SetEventData(StateEventData eventData)
+        {
+            
+        }
+
+        public virtual bool Handles(StateEventData eventData)
+        {
+            if (eventData == null)
+                return false;
+
+            return eventData.GetType() == EventDataType;
+        }
+    }
+
+    public class InitializeEventSink : StateEventSink
     {
         public IExecutable Fired { get; set; }
 
         public override void Execute(IStateExecutionContext context)
         {
-            context.Execute(Fired);    
+            context.Execute(Fired);  
         }
     }
 }

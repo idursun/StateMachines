@@ -43,38 +43,49 @@ namespace StateMachine.Designer
             var nodeType = types.Where(x => typeof(MachineNode).IsAssignableFrom(x)).ToList();
             foreach (var type in nodeType)
             {
-                Node node = new Node(type.FullName);
-
-                if (typeof (IExecutable).IsAssignableFrom(type))
-                {
-                    NodeLabelItem item = new NodeLabelItem("Exec", true, false);
-                    item.Input.ConnectorType = NodeConnectorType.Exec;
-                    node.AddItem(item);
-                }
-
-                //execute pins
-                foreach (var pin in type.GetPins(PinType.Execute))
-                {
-                    NodeLabelItem item = new NodeLabelItem(pin.Name, false, true);
-                    item.Output.ConnectorType = NodeConnectorType.Exec;
-                    node.AddItem(item);
-                }
-
-                foreach (var pin in type.GetPins(PinType.Input))
-                {
-                    NodeLabelItem item = new NodeLabelItem(pin.Name, true, false);
-                    node.AddItem(item);
-                }
-
-                foreach (var pin in type.GetPins(PinType.Output))
-                {
-                    NodeLabelItem nodeLabelItem = new NodeLabelItem(pin.Name, false, true);
-                    nodeLabelItem.Tag = pin.GetPropertyType();
-                    node.AddItem(nodeLabelItem);
-                }
-
-                graphControl1.AddNode(node);
+                CreateNodeFromType(type);
             }
+        }
+
+        private void CreateNodeFromType(Type type)
+        {
+            Node node = new Node(type.FullName);
+
+            if (typeof (IExecutable).IsAssignableFrom(type))
+            {
+                NodeLabelItem item = new NodeLabelItem("Exec", true, false);
+                item.Input.ConnectorType = NodeConnectorType.Exec;
+                node.AddItem(item);
+                node.BackColor = Color.Silver;
+            }
+
+            if (typeof (StateFunction).IsAssignableFrom(type))
+            {
+                node.BackColor = Color.LightGreen;
+            }
+
+            //execute pins
+            foreach (var pin in type.GetPins(PinType.Execute))
+            {
+                NodeLabelItem item = new NodeLabelItem(pin.Name, false, true);
+                item.Output.ConnectorType = NodeConnectorType.Exec;
+                node.AddItem(item);
+            }
+
+            foreach (var pin in type.GetPins(PinType.Input))
+            {
+                NodeLabelItem item = new NodeLabelItem(pin.Name, true, false);
+                node.AddItem(item);
+            }
+
+            foreach (var pin in type.GetPins(PinType.Output))
+            {
+                NodeLabelItem nodeLabelItem = new NodeLabelItem(pin.Name, false, true);
+                nodeLabelItem.Tag = pin.GetPropertyType();
+                node.AddItem(nodeLabelItem);
+            }
+
+            graphControl1.AddNode(node);
         }
     }
 }

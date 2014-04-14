@@ -20,6 +20,9 @@ namespace StateMachine.Core
 
         public void Execute(IExecutable node)
         {
+            if (node == null)
+                return;
+
             EvaluateInputs(node as MachineNode);
             node.Execute(this);
         }
@@ -45,16 +48,19 @@ namespace StateMachine.Core
         public void EvaluateInputs(MachineNode node)
         {
             if (node == null)
-                throw new ArgumentNullException("node");
+                return;
 
             var nodeInputPins = node.GetPins(PinType.Input);
             foreach (var inputPin in nodeInputPins)
             {
-                var connectedPins = m_machine.GetConnectedPins(inputPin);
-                foreach (var connectedPin in connectedPins)
+                IEnumerable<Pin> connectedPins = m_machine.GetConnectedPins(inputPin);
+                foreach (Pin connectedPin in connectedPins)
                 {
                     EvaluateInputs(connectedPin.Node);
-                    ((StateFunction)connectedPin.Node).Evaluate();
+                    StateFunction function = connectedPin.Node as StateFunction;
+                    if (function != null)
+                        function.Evaluate();
+
                     this.Set(connectedPin, connectedPin.GetValue());
                 }
             }

@@ -59,6 +59,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateMachineGraph.cs" />
     <Compile Include="Tests\BranchExecutionTests.cs" />
+    <Compile Include="Tests\EventSinkTests.cs" />
     <Compile Include="Tests\MachineNodeTests.cs" />
     <Compile Include="Tests\StateMachineTests.cs" />
     <Compile Include="Utils\ReflectionUtils.cs" />
