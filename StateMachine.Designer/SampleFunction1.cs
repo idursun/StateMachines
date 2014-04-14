@@ -49,4 +49,14 @@ namespace StateMachine.Designer
             MessageBox.Show(Message);
         }
     }
+
+    public class InitEventSink : StateEventSink
+    {
+        public IExecutable Next { get; set; }
+
+        public override void Execute(IStateExecutionContext context)
+        {
+            context.Execute(Next);    
+        }
+    }
 }

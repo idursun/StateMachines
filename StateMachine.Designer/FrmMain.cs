@@ -17,6 +17,9 @@ namespace StateMachine.Designer
 {
     public partial class FrmMain : Form
     {
+        private Point m_clickedAt;
+        private bool dragging;
+
         public FrmMain()
         {
             InitializeComponent();
@@ -43,14 +46,21 @@ namespace StateMachine.Designer
             var nodeType = types.Where(x => typeof(MachineNode).IsAssignableFrom(x)).ToList();
             foreach (var type in nodeType)
             {
-                CreateNodeFromType(type);
+                listBox1.Items.Add(new GraphNodeType()
+                {
+                    Name = type.FullName,
+                    NodeType = type
+                });
+
+                var node = CreateNodeFromType(type);
+                graphControl1.AddNode(node);
             }
         }
 
-        private void CreateNodeFromType(Type type)
+        private static Node CreateNodeFromType(Type type)
         {
             Node node = new Node(type.FullName);
-
+            node.Tag = type;
             if (typeof (IExecutable).IsAssignableFrom(type))
             {
                 NodeLabelItem item = new NodeLabelItem("Exec", true, false);
@@ -62,6 +72,11 @@ namespace StateMachine.Designer
             if (typeof (StateFunction).IsAssignableFrom(type))
             {
                 node.BackColor = Color.LightGreen;
+            }
+            
+            if (typeof (StateEventSink).IsAssignableFrom(type))
+            {
+                node.BackColor = Color.Salmon;
             }
 
             //execute pins
@@ -84,8 +99,72 @@ namespace StateMachine.Designer
                 nodeLabelItem.Tag = pin.GetPropertyType();
                 node.AddItem(nodeLabelItem);
             }
+            return node;
+        }
 
-            graphControl1.AddNode(node);
+        private void listBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            m_clickedAt = e.Location;
+            dragging = true;
+        }
+
+        private void listBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            var dragSize = SystemInformation.DragSize;
+            if (dragging && Math.Abs(e.X - m_clickedAt.X) > dragSize.Width ||  Math.Abs(e.Y - m_clickedAt.Y) > dragSize.Height)
+            {
+                GraphNodeType graphNodeType = listBox1.SelectedItem as GraphNodeType;
+                if (graphNodeType == null)
+                    return;
+                var node = CreateNodeFromType(graphNodeType.NodeType);
+                m_clickedAt = Point.Empty;
+                dragging = false;
+                this.DoDragDrop(node, DragDropEffects.Copy);
+            }
+        }
+
+        public class StateMachine
+        {
+            public StateMachine()
+            {
+                Nodes = new List<Tuple<Guid, string>>();
+                Connections = new List<Tuple<Guid, string, Guid, string>>();
+            }
+            public List<Tuple<Guid,string>> Nodes { get; set; }
+            public List<Tuple<Guid,string, Guid, string>> Connections { get; set; }
+        }
+
+        private void m_btnCompile_Click(object sender, EventArgs e)
+        {
+            StateMachine sm = new StateMachine();
+            Dictionary<Node, Guid> nodeToGuid = new Dictionary<Node, Guid>();
+            foreach (Node node in graphControl1.Nodes)
+            {
+                Type type = (Type) node.Tag;
+                var nodeGuid = Guid.NewGuid();
+                nodeToGuid[node] = nodeGuid;
+                sm.Nodes.Add(Tuple.Create(nodeGuid, type.FullName));
+            }
+
+            foreach (NodeConnection connection in graphControl1.Nodes.SelectMany(x => x.Connections))
+            {
+                var tuple = Tuple.Create(nodeToGuid[connection.From.Node], (connection.From.Item as NodeLabelItem).Text, nodeToGuid[connection.To.Node], (connection.To.Item as NodeLabelItem).Text);
+                if (!sm.Connections.Contains(tuple))
+                    sm.Connections.Add(tuple);
+            }
+        }
+    }
+
+    internal class GraphNodeType
+    {
+        public string Name { get; set; }
+        public Type NodeType { get; set; }
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
