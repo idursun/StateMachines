@@ -27,7 +27,27 @@ namespace StateMachine.Designer
             graphControl1.CompatibilityStrategy = new AlwaysCompatible();
             graphControl1.ConnectionAdding += GraphControl1OnConnectionAdding;
             graphControl1.ConnectionAdded += GraphControl1OnConnectionAdded;
+
             CreateTypeNodes();
+
+            LoadSampleGraph();
+            //graphControl1.AddNode()
+        }
+
+        private void LoadSampleGraph()
+        {
+            var initEventSinkNode = CreateNodeFromType(typeof (InitEventSink));
+            graphControl1.AddNode(initEventSinkNode);
+
+            var showMessageBoxNode = CreateNodeFromType(typeof (ShowMessageBox));
+            graphControl1.AddNode(showMessageBoxNode);
+
+            showMessageBoxNode.Location = new PointF(100, 100);
+
+            var nodeLabelItem = initEventSinkNode.Items.Cast<NodeLabelItem>().First(x => x.Text == "Next");
+            var nodeLabelItem2 = showMessageBoxNode.Items.Cast<NodeLabelItem>().First(x => x.Text == "Exec");
+            graphControl1.Connect(nodeLabelItem , nodeLabelItem2 );
+
         }
 
         private void GraphControl1OnConnectionAdded(object sender, AcceptNodeConnectionEventArgs e)
@@ -52,8 +72,8 @@ namespace StateMachine.Designer
                     NodeType = type
                 });
 
-                var node = CreateNodeFromType(type);
-                graphControl1.AddNode(node);
+                //var node = CreateNodeFromType(type);
+                //graphControl1.AddNode(node);
             }
         }
 
@@ -151,10 +171,40 @@ namespace StateMachine.Designer
 
             foreach (NodeConnection connection in graphControl1.Nodes.SelectMany(x => x.Connections))
             {
-                var tuple = Tuple.Create(nodeToGuid[connection.From.Node], (connection.From.Item as NodeLabelItem).Text, nodeToGuid[connection.To.Node], (connection.To.Item as NodeLabelItem).Text);
+                var tuple = Tuple.Create(
+                    nodeToGuid[connection.From.Node],
+                    (connection.From.Item as NodeLabelItem).Text,
+                    nodeToGuid[connection.To.Node],
+                    (connection.To.Item as NodeLabelItem).Text);
+
                 if (!sm.Connections.Contains(tuple))
                     sm.Connections.Add(tuple);
             }
+
+            Build(sm);
+        }
+
+        private void Build(StateMachine sm)
+        {
+            StateMachineGraph stateMachineGraph = new StateMachineGraph();
+            foreach (var tuple in sm.Nodes)
+            {
+                Guid guid = tuple.Item1;
+                Type type = Type.GetType(tuple.Item2);
+
+                MachineNode machineNode = Activator.CreateInstance(type) as MachineNode;
+                machineNode.Guid = guid;
+                stateMachineGraph.Add(machineNode);
+            }
+
+            foreach (var tuple in sm.Connections)
+            {
+                var node1 = stateMachineGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item1);
+                var node2 = stateMachineGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item3);
+
+                stateMachineGraph.Connect(node1.Pin(tuple.Item2), node2.Pin(tuple.Item4));
+            }
+
         }
     }
 

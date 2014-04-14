@@ -22,6 +22,9 @@ namespace StateMachine.Core
             if (node.Guid == Guid.Empty)
                 node.Guid = Guid.NewGuid();
 
+            if (Nodes.Any(x => x.Guid == node.Guid))
+                throw new Exception("a node with this guid already exists");
+
             Nodes.Add(node);
         }
 

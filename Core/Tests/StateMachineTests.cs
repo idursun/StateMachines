@@ -28,12 +28,25 @@ namespace StateMachine.Tests
         }
 
         [Test]
-        public void Test_Add_Sets_Guid()
+        public void Test_Add_Sets_Guid_If_Empty()
         {
             MakeMessageNode makeMessageNode = new MakeMessageNode();
             m_stateMachine.Add(makeMessageNode);
 
             Assert.That(makeMessageNode.Guid, Is.Not.EqualTo(Guid.Empty));
+        }
+
+        [Test]
+        public void Test_Add_ChecksGuidForDuplicate()
+        {
+            MakeMessageNode makeMessageNode1 = new MakeMessageNode();
+            MakeMessageNode makeMessageNode2 = new MakeMessageNode();
+            var newGuid = Guid.NewGuid();
+            makeMessageNode1.Guid = newGuid;
+            makeMessageNode2.Guid = newGuid;
+
+            m_stateMachine.Add(makeMessageNode1);
+            Assert.That(() => m_stateMachine.Add(makeMessageNode2), Throws.Exception); 
         }
 
         [Test]

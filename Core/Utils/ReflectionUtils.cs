@@ -64,6 +64,12 @@ namespace StateMachine.Core.Utils
                 throw new Exception("has to be a property expression");
 
             var propertyName = member.Member.Name;
+            return Pin(node, propertyName);
+        }
+
+        public static Pin Pin<T>(this T node, string propertyName)
+            where T: MachineNode
+        {
             var propertyInfo = typeof(T).GetProperties().FirstOrDefault(x => x.Name == propertyName);
             if (propertyInfo == null)
                 throw new Exception(string.Format("Property '{0}' is not found", propertyName));
@@ -74,27 +80,5 @@ namespace StateMachine.Core.Utils
                 Name = propertyName
             };
         }
-
-        //public static Pin Flow<T>(this T node, Expression<Func<T, IExecutable>> expr)
-        //    where T: IExecutable
-        //{
-        //    if (expr.NodeType != ExpressionType.Lambda)
-        //        throw new Exception("Has to be lambda.");
-
-        //    MemberExpression member = (expr.Body as MemberExpression);
-        //    if (member == null)
-        //        throw new Exception("has to be a property expression");
-
-        //    var propertyName = member.Member.Name;
-        //    var propertyInfo = typeof(T).GetProperties().FirstOrDefault(x => x.Name == propertyName);
-        //    if (propertyInfo == null)
-        //        throw new Exception(string.Format("Property '{0}' is not found", propertyName));
-
-        //    return new Pin(propertyInfo)
-        //    {
-        //        Node = node as MachineNode,
-        //        Name = propertyInfo.Name
-        //    };
-        //}
     }
 }
