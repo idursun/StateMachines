@@ -139,9 +139,8 @@ namespace StateMachines.Designer
 
         private void m_btnCompile_Click(object sender, EventArgs e)
         {
-            var sm = graphControl1.ConvertToStateMachineGraph();
-
-            StateMachine stateMachine = sm.BuildStateMachine();
+            StateMachineGraph stateMachineGraph = graphControl1.ConvertToStateMachineGraph();
+            StateMachine stateMachine = stateMachineGraph.BuildStateMachine();
 
             try
             {
