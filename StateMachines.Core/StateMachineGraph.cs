@@ -21,9 +21,7 @@ namespace StateMachine.Core
             foreach (var tuple in this.Nodes)
             {
                 Guid guid = tuple.Item1;
-                Type type = Type.GetType(tuple.Item2);
-                if (type == null)
-                    throw new Exception(String.Format("type {0} is not found", tuple.Item2));
+                Type type = Type.GetType(tuple.Item2, true);
 
                 MachineNode machineNode = Activator.CreateInstance(type) as MachineNode;
                 if (machineNode == null) 

@@ -1,20 +1,19 @@
 ﻿using System;
-using Moq;
 using NUnit.Framework;
 using StateMachine.Core;
 using StateMachine.Core.Utils;
 
-namespace StateMachine.Tests
+namespace StateMachines.Core.Tests
 {
     [TestFixture]
     public class StateMachineTests
     {
-        private Core.StateMachine m_stateMachine;
+        private StateMachine.Core.StateMachine m_stateMachine;
 
         [SetUp]
         public void Setup()
         {
-            m_stateMachine = new Core.StateMachine();
+            m_stateMachine = new StateMachine.Core.StateMachine();
         }
 
         [Test]

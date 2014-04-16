@@ -3,7 +3,7 @@ using NUnit.Framework;
 using StateMachine.Core;
 using StateMachine.Core.Logic;
 
-namespace StateMachine.Tests
+namespace StateMachines.Core.Tests
 {
     [TestFixture]
     public class BranchExecutionTests

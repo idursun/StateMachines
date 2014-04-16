@@ -3,7 +3,7 @@ using System.Linq;
 using StateMachine.Core;
 using StateMachine.Core.Utils;
 
-namespace StateMachine.Tests
+namespace StateMachines.Core.Tests
 {
     [TestFixture]
     public class MachineNodeTests
