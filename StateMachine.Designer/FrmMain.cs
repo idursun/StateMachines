@@ -191,8 +191,13 @@ namespace StateMachine.Designer
             {
                 Guid guid = tuple.Item1;
                 Type type = Type.GetType(tuple.Item2);
+                if (type == null)
+                    throw new Exception(string.Format("type {0} is not found", tuple.Item2));
 
                 MachineNode machineNode = Activator.CreateInstance(type) as MachineNode;
+                if (machineNode == null) 
+                    throw new Exception("type cannot be casted to MachineNode");
+
                 machineNode.Guid = guid;
                 stateMachineGraph.Add(machineNode);
             }
@@ -201,10 +206,18 @@ namespace StateMachine.Designer
             {
                 var node1 = stateMachineGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item1);
                 var node2 = stateMachineGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item3);
-
-                stateMachineGraph.Connect(node1.Pin(tuple.Item2), node2.Pin(tuple.Item4));
+                if (tuple.Item4 == "Exec")
+                {
+                    stateMachineGraph.Connect(node1.Pin(tuple.Item2), node2 as IExecutable);
+                }
+                else
+                {
+                    stateMachineGraph.Connect(node1.Pin(tuple.Item2), node2.Pin(tuple.Item4));
+                }
             }
 
+            stateMachineGraph.Compile();
+            stateMachineGraph.PublishEvent(StateEventData.Empty);
         }
     }
 

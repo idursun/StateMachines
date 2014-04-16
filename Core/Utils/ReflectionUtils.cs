@@ -64,13 +64,15 @@ namespace StateMachine.Core.Utils
                 throw new Exception("has to be a property expression");
 
             var propertyName = member.Member.Name;
+
             return Pin(node, propertyName);
         }
 
         public static Pin Pin<T>(this T node, string propertyName)
             where T: MachineNode
         {
-            var propertyInfo = typeof(T).GetProperties().FirstOrDefault(x => x.Name == propertyName);
+            var properties = node.GetType().GetProperties();
+            var propertyInfo = properties.FirstOrDefault(x => x.Name == propertyName);
             if (propertyInfo == null)
                 throw new Exception(string.Format("Property '{0}' is not found", propertyName));
 

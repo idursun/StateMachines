@@ -17,23 +17,73 @@ namespace StateMachine.Designer
         {
             Result = First + " " + Second;
         }
-    }  
-    
+    }
+
     public class RandomIntegerFunction : StateFunction
     {
         [Input]
         public int Min { get; set; }
+
         [Input]
         public int Max { get; set; }
 
         [Output]
         public int Result { get; set; }
 
-        readonly Random rnd = new Random();
+        private readonly Random rnd = new Random();
+
+        public RandomIntegerFunction()
+        {
+            Min = 0;
+            Max = 20;
+        }
 
         public override void Evaluate()
         {
             Result = rnd.Next(Min, Max);
+        }
+    }
+
+    public class RandomStringGenerator: StateFunction
+    {
+
+        [Input]
+        public int Length { get; set; }
+
+        [Output]
+        public string Generated { get; set; }
+
+        public RandomStringGenerator()
+        {
+            Length = 10;
+        }
+
+        private Random m_random = new Random();
+
+        public override void Evaluate()
+        {
+            string name = "";
+            for (int i = 0; i < Length; i++)
+            {
+                name += (char)(65 + m_random.Next(26));
+            }
+            Generated = name;
+        }
+    }
+
+    class ConcatFunction : StateFunction
+    {
+        [Input]
+        public string First { get; set; }
+        [Input]
+        public string Second { get; set; }
+
+        [Output]
+        public string Output { get; set; }
+
+        public override void Evaluate()
+        {
+            Output = First + " " + Second;
         }
     }
 
@@ -47,6 +97,7 @@ namespace StateMachine.Designer
         public override void Execute(IStateExecutionContext context)
         {
             MessageBox.Show(Message);
+            context.Execute(Next);
         }
     }
 

@@ -17,6 +17,24 @@ namespace StateMachine.Tests
              Assert.That(pin.Name, Is.EqualTo("Output1"));
          }
         
+        [Test]
+         public void Test_Pin_ByName_Returns_not_Null()
+         {
+             SampleNode sampleNode = new SampleNode();
+             Pin pin = sampleNode.Pin("Output1");
+             Assert.That(pin, Is.Not.Null);
+             Assert.That(pin.Name, Is.EqualTo("Output1"));
+         }
+
+        [Test]
+         public void Test_Pin_ByName_From_BaseType_Returns_not_Null_()
+         {
+             MachineNode sampleNode = new SampleNode();
+             Pin pin = sampleNode.Pin("Output1");
+             Assert.That(pin, Is.Not.Null);
+             Assert.That(pin.Name, Is.EqualTo("Output1"));
+         }
+        
          [Test]
          public void Test_Pin_Throws_If_expression_is_not_a_property()
          {
