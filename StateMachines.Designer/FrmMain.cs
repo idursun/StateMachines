@@ -21,7 +21,6 @@ namespace StateMachines.Designer
         {
             InitializeComponent();
 
-            graphControl1.CompatibilityStrategy = new AlwaysCompatible();
             graphControl1.CompatibilityStrategy = new TypeCompatibility();
             graphControl1.ConnectionAdded += GraphControl1OnConnectionAdded;
             graphControl1.HighlightCompatible = true;
@@ -175,6 +174,13 @@ namespace StateMachines.Designer
         }
     }
 
+    public class TypeCompatibility : ICompatibilityStrategy
+    {
+        public bool CanConnect(NodeConnector @from, NodeConnector to)
+        {
+            if (@from.ConnectorType != to.ConnectorType)
+                return false;
+            return true;
         }
     }
 
