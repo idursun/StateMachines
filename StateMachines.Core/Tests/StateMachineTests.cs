@@ -9,12 +9,12 @@ namespace StateMachine.Tests
     [TestFixture]
     public class StateMachineTests
     {
-        private StateMachineGraph m_stateMachine;
+        private Core.StateMachine m_stateMachine;
 
         [SetUp]
         public void Setup()
         {
-            m_stateMachine = new StateMachineGraph();
+            m_stateMachine = new Core.StateMachine();
         }
 
         [Test]

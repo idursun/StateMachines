@@ -71,7 +71,7 @@ namespace StateMachine.Designer
         }
     }
 
-    class ConcatFunction : StateFunction
+    public class ConcatFunction : StateFunction
     {
         [Input]
         public string First { get; set; }

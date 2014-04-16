@@ -146,20 +146,9 @@ namespace StateMachine.Designer
             }
         }
 
-        public class StateMachine
-        {
-            public StateMachine()
-            {
-                Nodes = new List<Tuple<Guid, string>>();
-                Connections = new List<Tuple<Guid, string, Guid, string>>();
-            }
-            public List<Tuple<Guid,string>> Nodes { get; set; }
-            public List<Tuple<Guid,string, Guid, string>> Connections { get; set; }
-        }
-
         private void m_btnCompile_Click(object sender, EventArgs e)
         {
-            StateMachine sm = new StateMachine();
+            Core.StateMachineGraph sm = new Core.StateMachineGraph();
             Dictionary<Node, Guid> nodeToGuid = new Dictionary<Node, Guid>();
             foreach (Node node in graphControl1.Nodes)
             {
@@ -181,42 +170,8 @@ namespace StateMachine.Designer
                     sm.Connections.Add(tuple);
             }
 
-            Build(sm);
-        }
+            var stateMachineGraph = sm.BuildGraph();
 
-        private void Build(StateMachine sm)
-        {
-            StateMachineGraph stateMachineGraph = new StateMachineGraph();
-            foreach (var tuple in sm.Nodes)
-            {
-                Guid guid = tuple.Item1;
-                Type type = Type.GetType(tuple.Item2);
-                if (type == null)
-                    throw new Exception(string.Format("type {0} is not found", tuple.Item2));
-
-                MachineNode machineNode = Activator.CreateInstance(type) as MachineNode;
-                if (machineNode == null) 
-                    throw new Exception("type cannot be casted to MachineNode");
-
-                machineNode.Guid = guid;
-                stateMachineGraph.Add(machineNode);
-            }
-
-            foreach (var tuple in sm.Connections)
-            {
-                var node1 = stateMachineGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item1);
-                var node2 = stateMachineGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item3);
-                if (tuple.Item4 == "Exec")
-                {
-                    stateMachineGraph.Connect(node1.Pin(tuple.Item2), node2 as IExecutable);
-                }
-                else
-                {
-                    stateMachineGraph.Connect(node1.Pin(tuple.Item2), node2.Pin(tuple.Item4));
-                }
-            }
-
-            stateMachineGraph.Compile();
             stateMachineGraph.PublishEvent(StateEventData.Empty);
         }
     }

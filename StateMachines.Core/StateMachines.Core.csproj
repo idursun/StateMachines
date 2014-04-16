@@ -8,8 +8,8 @@
     <ProjectGuid>{813BAE62-4233-4B01-8896-80C40990E866}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StateMachine.Core</RootNamespace>
-    <AssemblyName>StateMachine.Core</AssemblyName>
+    <RootNamespace>StateMachines.Core</RootNamespace>
+    <AssemblyName>StateMachines.Core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -58,6 +58,7 @@
     <Compile Include="Pin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateMachineGraph.cs" />
+    <Compile Include="StateMachine.cs" />
     <Compile Include="Tests\BranchExecutionTests.cs" />
     <Compile Include="Tests\EventSinkTests.cs" />
     <Compile Include="Tests\MachineNodeTests.cs" />

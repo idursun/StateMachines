@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace StateMachine.Core
 {
-    public class StateMachineGraph
+    public class StateMachine
     {
-        public StateMachineGraph()
+        public StateMachine()
         {
             Nodes = new List<MachineNode>();
             Connections = new List<Tuple<Pin, Pin>>();

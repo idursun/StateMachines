@@ -12,7 +12,7 @@ namespace StateMachine.Core
 
     public class StateExecutionContext : IStateExecutionContext
     {
-        public StateExecutionContext(StateMachineGraph machine)
+        public StateExecutionContext(StateMachine machine)
         {
             m_machine = machine;
             m_Variables = new Dictionary<string, object>();
@@ -92,6 +92,6 @@ namespace StateMachine.Core
 
         private readonly Dictionary<string, object> m_Variables;
 
-        private readonly StateMachineGraph m_machine;
+        private readonly StateMachine m_machine;
     }
 }
