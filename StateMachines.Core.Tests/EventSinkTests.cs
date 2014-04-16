@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
-using StateMachine.Core;
-using StateMachine.Core.Utils;
+using StateMachines.Core.Utils;
 
 namespace StateMachines.Core.Tests
 {
@@ -8,12 +7,12 @@ namespace StateMachines.Core.Tests
     public class EventSinkTests
     {
 
-        private StateMachine.Core.StateMachine m_stateMachine;
+        private StateMachine m_stateMachine;
 
         [SetUp]
         public void Setup()
         {
-            m_stateMachine = new StateMachine.Core.StateMachine();
+            m_stateMachine = new StateMachine();
         }
 
         [Test]

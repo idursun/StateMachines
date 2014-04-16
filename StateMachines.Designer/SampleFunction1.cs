@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using StateMachine.Core;
+using StateMachines.Core;
 
-namespace StateMachine.Designer
+namespace StateMachines.Designer
 {
     public class SampleFunction1 : StateFunction
     {

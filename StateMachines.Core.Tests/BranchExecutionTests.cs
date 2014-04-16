@@ -1,7 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
-using StateMachine.Core;
-using StateMachine.Core.Logic;
+using StateMachines.Core.Logic;
 
 namespace StateMachines.Core.Tests
 {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using StateMachine.Core.Utils;
+using StateMachines.Core.Utils;
 
-namespace StateMachine.Core
+namespace StateMachines.Core
 {
     public interface IStateExecutionContext
     {

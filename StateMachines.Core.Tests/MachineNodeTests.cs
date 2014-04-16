@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Linq;
-using StateMachine.Core;
-using StateMachine.Core.Utils;
+using StateMachines.Core.Utils;
 
 namespace StateMachines.Core.Tests
 {

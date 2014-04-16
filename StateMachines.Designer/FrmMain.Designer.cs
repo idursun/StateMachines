@@ -1,4 +1,4 @@
-﻿namespace StateMachine.Designer
+﻿namespace StateMachines.Designer
 {
     partial class FrmMain
     {

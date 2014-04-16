@@ -1,4 +1,4 @@
-﻿namespace StateMachine.Core
+﻿namespace StateMachines.Core
 {
     public interface IExecutable
     {

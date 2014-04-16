@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StateMachine.Core
+namespace StateMachines.Core
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
     public class OutputAttribute: Attribute

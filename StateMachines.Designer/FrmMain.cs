@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using Graph;
 using Graph.Compatibility;
 using Graph.Items;
-using StateMachine.Core;
-using StateMachine.Core.Utils;
+using StateMachines.Core;
+using StateMachines.Core.Utils;
 
-namespace StateMachine.Designer
+namespace StateMachines.Designer
 {
     public partial class FrmMain : Form
     {
@@ -25,9 +22,9 @@ namespace StateMachine.Designer
             InitializeComponent();
 
             graphControl1.CompatibilityStrategy = new AlwaysCompatible();
-            graphControl1.ConnectionAdding += GraphControl1OnConnectionAdding;
+            graphControl1.CompatibilityStrategy = new TypeCompatibility();
             graphControl1.ConnectionAdded += GraphControl1OnConnectionAdded;
-
+            graphControl1.HighlightCompatible = true;
             CreateTypeNodes();
 
             LoadSampleGraph();
@@ -53,11 +50,6 @@ namespace StateMachine.Designer
         private void GraphControl1OnConnectionAdded(object sender, AcceptNodeConnectionEventArgs e)
         {
             e.Connection.Name = " None ";
-        }
-
-        private void GraphControl1OnConnectionAdding(object sender, AcceptNodeConnectionEventArgs acceptNodeConnectionEventArgs)
-        {
-            acceptNodeConnectionEventArgs.Cancel = false;
         }
 
         private void CreateTypeNodes()
@@ -148,14 +140,14 @@ namespace StateMachine.Designer
 
         private void m_btnCompile_Click(object sender, EventArgs e)
         {
-            Core.StateMachineGraph sm = new Core.StateMachineGraph();
+            StateMachineGraph sm = new StateMachineGraph();
             Dictionary<Node, Guid> nodeToGuid = new Dictionary<Node, Guid>();
             foreach (Node node in graphControl1.Nodes)
             {
                 Type type = (Type) node.Tag;
                 var nodeGuid = Guid.NewGuid();
                 nodeToGuid[node] = nodeGuid;
-                sm.Nodes.Add(Tuple.Create(nodeGuid, type.FullName));
+                sm.Nodes.Add(Tuple.Create(nodeGuid, type.AssemblyQualifiedName));
             }
 
             foreach (NodeConnection connection in graphControl1.Nodes.SelectMany(x => x.Connections))
@@ -172,7 +164,17 @@ namespace StateMachine.Designer
 
             var stateMachineGraph = sm.BuildGraph();
 
-            stateMachineGraph.PublishEvent(StateEventData.Empty);
+            try
+            {
+                stateMachineGraph.PublishEvent(StateEventData.Empty);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Error:" + exception.Message);
+            }
+        }
+    }
+
         }
     }
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using StateMachine.Core.Utils;
+using StateMachines.Core.Utils;
 
-namespace StateMachine.Core
+namespace StateMachines.Core
 {
     public class StateMachineGraph
     {

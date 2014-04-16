@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace StateMachine.Core.Utils
+namespace StateMachines.Core.Utils
 {
     public static class ReflectionUtils
     {

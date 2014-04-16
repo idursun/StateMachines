@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
-namespace StateMachine.Designer
+namespace StateMachines.Designer
 {
     static class Program
     {
