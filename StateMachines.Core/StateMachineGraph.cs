@@ -12,10 +12,11 @@ namespace StateMachines.Core
             Nodes = new List<Tuple<Guid, string>>();
             Connections = new List<Tuple<Guid, string, Guid, string>>();
         }
+
         public List<Tuple<Guid, string>> Nodes { get; set; }
         public List<Tuple<Guid, string, Guid, string>> Connections { get; set; }
 
-        public StateMachine BuildGraph()
+        public StateMachine BuildStateMachine()
         {
             StateMachine stateMachineGraph = new StateMachine();
             foreach (var tuple in this.Nodes)

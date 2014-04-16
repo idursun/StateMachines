@@ -139,33 +139,13 @@ namespace StateMachines.Designer
 
         private void m_btnCompile_Click(object sender, EventArgs e)
         {
-            StateMachineGraph sm = new StateMachineGraph();
-            Dictionary<Node, Guid> nodeToGuid = new Dictionary<Node, Guid>();
-            foreach (Node node in graphControl1.Nodes)
-            {
-                Type type = (Type) node.Tag;
-                var nodeGuid = Guid.NewGuid();
-                nodeToGuid[node] = nodeGuid;
-                sm.Nodes.Add(Tuple.Create(nodeGuid, type.AssemblyQualifiedName));
-            }
+            var sm = graphControl1.ConvertToStateMachineGraph();
 
-            foreach (NodeConnection connection in graphControl1.Nodes.SelectMany(x => x.Connections))
-            {
-                var tuple = Tuple.Create(
-                    nodeToGuid[connection.From.Node],
-                    (connection.From.Item as NodeLabelItem).Text,
-                    nodeToGuid[connection.To.Node],
-                    (connection.To.Item as NodeLabelItem).Text);
-
-                if (!sm.Connections.Contains(tuple))
-                    sm.Connections.Add(tuple);
-            }
-
-            var stateMachineGraph = sm.BuildGraph();
+            StateMachine stateMachine = sm.BuildStateMachine();
 
             try
             {
-                stateMachineGraph.PublishEvent(StateEventData.Empty);
+                stateMachine.PublishEvent(StateEventData.Empty);
             }
             catch (Exception exception)
             {
