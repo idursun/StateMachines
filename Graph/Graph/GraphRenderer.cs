@@ -319,14 +319,14 @@ namespace Graph
 				path.AddArc(left, bottom - cornerSize, cornerSize, cornerSize, 90, 90);
 				path.CloseFigure();
 
-				if ((node.state & (RenderState.Dragging | RenderState.Focus)) != 0)
-				{
-					graphics.FillPath(Brushes.DarkOrange, path);
-				} else
-				if ((node.state & RenderState.Hover) != 0)
-				{
-					graphics.FillPath(Brushes.LightSteelBlue, path);
-				} else
+                //if ((node.state & (RenderState.Dragging | RenderState.Focus)) != 0)
+                //{
+                //    graphics.FillPath(Brushes.DarkOrange, path);
+                //} else
+                //if ((node.state & RenderState.Hover) != 0)
+                //{
+                //    graphics.FillPath(Brushes.LightSteelBlue, path);
+                //} else
 				{
 				    using (SolidBrush brush = new SolidBrush(node.BackColor))
 				    {
