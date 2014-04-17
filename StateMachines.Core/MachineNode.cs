@@ -12,7 +12,7 @@ namespace StateMachines.Core
         public static readonly StateEventData Empty = new StateEventData();
     }
 
-    public abstract class StateEventSink: MachineNode, IExecutable
+    public abstract class StateEventReceiver: MachineNode, IExecutable
     {
         public string Name { get; set; }
         public abstract void Execute(IStateExecutionContext context);
@@ -32,7 +32,7 @@ namespace StateMachines.Core
         }
     }
 
-    public class InitializeEventSink : StateEventSink
+    public class InitializeEventReceiver : StateEventReceiver
     {
         public IExecutable Fired { get; set; }
 

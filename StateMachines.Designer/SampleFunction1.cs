@@ -46,7 +46,6 @@ namespace StateMachines.Designer
 
     public class RandomStringGenerator: StateFunction
     {
-
         [Input]
         public int Length { get; set; }
 
@@ -58,7 +57,7 @@ namespace StateMachines.Designer
             Length = 10;
         }
 
-        private Random m_random = new Random();
+        private readonly Random m_random = new Random();
 
         public override void Evaluate()
         {
@@ -101,7 +100,7 @@ namespace StateMachines.Designer
         }
     }
 
-    public class InitEventSink : StateEventSink
+    public class InitEventReceiver : StateEventReceiver
     {
         public IExecutable Next { get; set; }
 

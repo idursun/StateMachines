@@ -18,8 +18,8 @@ namespace StateMachines.Core.Tests
         [Test]
         public void Test_HandlesEventFromADerivedType()
         {
-            var eventSink1 = new DataReceivedEventSink();
-            var eventSink2 = new DataReceivedEventSink();
+            var eventSink1 = new DataReceivedEventReceiver();
+            var eventSink2 = new DataReceivedEventReceiver();
             var executionNode = new MakeMessageNode();
             var concatFunction = new ConcatFunction();
 
@@ -43,7 +43,7 @@ namespace StateMachines.Core.Tests
         }
     }
 
-    public class DataReceivedEventSink : StateEventSink
+    public class DataReceivedEventReceiver : StateEventReceiver
     {
         [Output]
         public string Data { get; set; }

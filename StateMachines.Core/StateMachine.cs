@@ -78,7 +78,7 @@ namespace StateMachines.Core
 
             StateEventData stateEventData = events.Dequeue();
 
-            IEnumerable<StateEventSink> matchingEventSinks = EventSinksNodes().Where(x => x.Handles(stateEventData)).ToList();
+            IEnumerable<StateEventReceiver> matchingEventSinks = EventSinksNodes().Where(x => x.Handles(stateEventData)).ToList();
 
             StateExecutionContext context = new StateExecutionContext(this);
             //first set data for every sink
@@ -95,9 +95,9 @@ namespace StateMachines.Core
             }
         }
 
-        private IEnumerable<StateEventSink> EventSinksNodes()
+        private IEnumerable<StateEventReceiver> EventSinksNodes()
         {
-            return Nodes.Where(x => x is StateEventSink).Cast<StateEventSink>().ToList();
+            return Nodes.Where(x => x is StateEventReceiver).Cast<StateEventReceiver>().ToList();
         }
 
         public IEnumerable<Pin> GetConnectedPins(Pin input)

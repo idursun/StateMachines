@@ -32,7 +32,7 @@ namespace StateMachines.Designer
 
         private void LoadSampleGraph()
         {
-            var initEventSinkNode = CreateNodeFromType(typeof (InitEventSink));
+            var initEventSinkNode = CreateNodeFromType(typeof (InitEventReceiver));
             graphControl1.AddNode(initEventSinkNode);
 
             var showMessageBoxNode = CreateNodeFromType(typeof (ShowMessageBox));
@@ -85,7 +85,7 @@ namespace StateMachines.Designer
                 node.BackColor = Color.LightGreen;
             }
             
-            if (typeof (StateEventSink).IsAssignableFrom(type))
+            if (typeof (StateEventReceiver).IsAssignableFrom(type))
             {
                 node.BackColor = Color.Salmon;
             }

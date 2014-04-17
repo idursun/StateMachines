@@ -50,7 +50,7 @@ namespace StateMachines.Core.Tests
         [Test]
         public void Test_Signal_ProvidesInputValues()
         {
-            var initEvent = new InitializeEventSink();
+            var initEvent = new InitializeEventReceiver();
             var executionNode = new MakeMessageNode();
             var concatFunction = new ConcatFunction();
             var getMessage1Function = new GetMessageFunction("Hello");
