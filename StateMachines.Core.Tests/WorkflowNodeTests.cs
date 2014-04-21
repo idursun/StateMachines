@@ -5,7 +5,7 @@ using StateMachines.Core.Utils;
 namespace StateMachines.Core.Tests
 {
     [TestFixture]
-    public class MachineNodeTests
+    public class WorkflowNodeTests
     {
          [Test]
          public void Test_Pin_Returns_not_Null()
@@ -28,7 +28,7 @@ namespace StateMachines.Core.Tests
         [Test]
          public void Test_Pin_ByName_From_BaseType_Returns_not_Null_()
          {
-             MachineNode sampleNode = new SampleNode();
+             WorkflowNode sampleNode = new SampleNode();
              Pin pin = sampleNode.Pin("Output1");
              Assert.That(pin, Is.Not.Null);
              Assert.That(pin.Name, Is.EqualTo("Output1"));
@@ -85,7 +85,7 @@ namespace StateMachines.Core.Tests
         }
     }
 
-    public class SampleNode : StateFunction
+    public class SampleNode : WorkflowFunction
     {
         [Input]
         public string Input1 { get; set; }

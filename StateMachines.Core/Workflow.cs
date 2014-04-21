@@ -4,20 +4,20 @@ using System.Linq;
 
 namespace StateMachines.Core
 {
-    public class StateMachine
+    public class Workflow
     {
-        public StateMachine()
+        public Workflow()
         {
-            Nodes = new List<MachineNode>();
+            Nodes = new List<WorkflowNode>();
             Connections = new List<Tuple<Pin, Pin>>();
             FlowConnections = new List<Tuple<Pin, IExecutable>>();
         }
 
-        public List<MachineNode> Nodes { get; private set; }
+        public List<WorkflowNode> Nodes { get; private set; }
         public List<Tuple<Pin, Pin>> Connections { get; private set; }
         public List<Tuple<Pin, IExecutable>> FlowConnections { get; private set; }
 
-        public void Add(MachineNode node)
+        public void Add(WorkflowNode node)
         {
             if (node.Guid == Guid.Empty)
                 node.Guid = Guid.NewGuid();
@@ -43,10 +43,10 @@ namespace StateMachines.Core
         public void Connect(Pin pin1, IExecutable executable)
         {
             if (pin1 == null) throw new ArgumentNullException("pin1");
-            if (executable == null) throw new ArgumentNullException("pin2");
+            if (executable == null) throw new ArgumentNullException("executable");
             if (!Nodes.Contains(pin1.Node))
                 throw new Exception("node for pin1 is not added");
-            if (!Nodes.Contains(executable as MachineNode))
+            if (!Nodes.Contains(executable as WorkflowNode))
                 throw new Exception("node for pin2 is not added");
 
             FlowConnections.Add(Tuple.Create(pin1, executable));
@@ -61,12 +61,12 @@ namespace StateMachines.Core
             m_compiled = true;
         }
 
-        public void PublishEvent(StateEventData stateEventData)
+        public void PublishEvent(WorkflowEventData workflowEventData)
         {
             if (!m_compiled)
                 throw new Exception("graph is not compiled");
 
-            events.Enqueue(stateEventData);
+            events.Enqueue(workflowEventData);
 
             Signal();
         }
@@ -76,15 +76,15 @@ namespace StateMachines.Core
             if (events.Count == 0)
                 return;
 
-            StateEventData stateEventData = events.Dequeue();
+            WorkflowEventData workflowEventData = events.Dequeue();
 
-            IEnumerable<StateEventReceiver> matchingEventSinks = EventSinksNodes().Where(x => x.Handles(stateEventData)).ToList();
+            IEnumerable<WorkflowEventReceiver> matchingEventSinks = EventSinksNodes().Where(x => x.Handles(workflowEventData)).ToList();
 
-            StateExecutionContext context = new StateExecutionContext(this);
+            WorkflowExecutionContext context = new WorkflowExecutionContext(this);
             //first set data for every sink
             foreach (var matchingNode in matchingEventSinks)
             {
-                matchingNode.SetEventData(stateEventData);
+                matchingNode.SetEventData(workflowEventData);
             }
 
             // and then execute each node
@@ -95,9 +95,9 @@ namespace StateMachines.Core
             }
         }
 
-        private IEnumerable<StateEventReceiver> EventSinksNodes()
+        private IEnumerable<WorkflowEventReceiver> EventSinksNodes()
         {
-            return Nodes.Where(x => x is StateEventReceiver).Cast<StateEventReceiver>().ToList();
+            return Nodes.Where(x => x is WorkflowEventReceiver).Cast<WorkflowEventReceiver>().ToList();
         }
 
         public IEnumerable<Pin> GetConnectedPins(Pin input)
@@ -111,8 +111,7 @@ namespace StateMachines.Core
             }
         }
 
-        private readonly Queue<StateEventData> events = new Queue<StateEventData>();
+        private readonly Queue<WorkflowEventData> events = new Queue<WorkflowEventData>();
         private bool m_compiled;
-        //private readonly Dictionary<string, object> m_Variables = new Dictionary<string, object>();
     }
 }

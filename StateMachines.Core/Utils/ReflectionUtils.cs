@@ -43,7 +43,7 @@ namespace StateMachines.Core.Utils
         }
 
         public static IEnumerable<Pin> GetPins<T>(this T node, PinType pinType)
-            where T: MachineNode
+            where T: WorkflowNode
         {
             Type type1 = node.GetType();
             foreach (var pin in GetPins(type1, pinType))
@@ -54,7 +54,7 @@ namespace StateMachines.Core.Utils
         }
 
         public static Pin Pin<T>(this T node, Expression<Func<T, object>> expr)
-            where T: MachineNode
+            where T: WorkflowNode
         {
             if (expr.NodeType != ExpressionType.Lambda)
                 throw new Exception("Has to be lambda.");
@@ -69,7 +69,7 @@ namespace StateMachines.Core.Utils
         }
 
         public static Pin Pin<T>(this T node, string propertyName)
-            where T: MachineNode
+            where T: WorkflowNode
         {
             var properties = node.GetType().GetProperties();
             var propertyInfo = properties.FirstOrDefault(x => x.Name == propertyName);

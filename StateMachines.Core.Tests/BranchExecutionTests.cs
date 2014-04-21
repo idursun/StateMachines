@@ -10,7 +10,7 @@ namespace StateMachines.Core.Tests
         [Test]
         public void Test_Executes_True_Branch()
         {
-            var contextMock = new Mock<IStateExecutionContext>();
+            var contextMock = new Mock<IWorkflowExecutionContext>();
             var node = new BranchExecutionNode();
             node.Condition = true;
             node.Execute(contextMock.Object);
@@ -21,7 +21,7 @@ namespace StateMachines.Core.Tests
         [Test]
         public void Test_Executes_False_Branch()
         {
-            var contextMock = new Mock<IStateExecutionContext>();
+            var contextMock = new Mock<IWorkflowExecutionContext>();
             var node = new BranchExecutionNode();
             node.Condition = false;
             node.Execute(contextMock.Object);

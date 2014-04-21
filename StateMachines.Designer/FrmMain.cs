@@ -54,7 +54,7 @@ namespace StateMachines.Designer
         private void CreateTypeNodes()
         {
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
-            var nodeType = types.Where(x => typeof(MachineNode).IsAssignableFrom(x)).ToList();
+            var nodeType = types.Where(x => typeof(WorkflowNode).IsAssignableFrom(x)).ToList();
             foreach (var type in nodeType)
             {
                 listBox1.Items.Add(new GraphNodeType()
@@ -80,12 +80,12 @@ namespace StateMachines.Designer
                 node.BackColor = Color.Silver;
             }
 
-            if (typeof (StateFunction).IsAssignableFrom(type))
+            if (typeof (WorkflowFunction).IsAssignableFrom(type))
             {
                 node.BackColor = Color.LightGreen;
             }
             
-            if (typeof (StateEventReceiver).IsAssignableFrom(type))
+            if (typeof (WorkflowEventReceiver).IsAssignableFrom(type))
             {
                 node.BackColor = Color.Salmon;
             }
@@ -139,12 +139,13 @@ namespace StateMachines.Designer
 
         private void m_btnCompile_Click(object sender, EventArgs e)
         {
-            StateMachineGraph stateMachineGraph = graphControl1.ConvertToStateMachineGraph();
-            StateMachine stateMachine = stateMachineGraph.BuildStateMachine();
+            WorkflowGraph workflowGraph = graphControl1.ConvertToWorkflowGraph();
+            Workflow workflow = workflowGraph.BuildWorkflow();
 
             try
             {
-                stateMachine.PublishEvent(StateEventData.Empty);
+                workflow.Compile();
+                workflow.PublishEvent(WorkflowEventData.Empty);
             }
             catch (Exception exception)
             {

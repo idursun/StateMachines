@@ -4,15 +4,9 @@ using StateMachines.Core.Utils;
 
 namespace StateMachines.Core
 {
-    public interface IStateExecutionContext
+    public class WorkflowExecutionContext : IWorkflowExecutionContext
     {
-        void Execute(IExecutable node);
-        void EvaluateInputs(MachineNode node);
-    }
-
-    public class StateExecutionContext : IStateExecutionContext
-    {
-        public StateExecutionContext(StateMachine machine)
+        public WorkflowExecutionContext(Workflow machine)
         {
             m_machine = machine;
             m_Variables = new Dictionary<string, object>();
@@ -23,7 +17,7 @@ namespace StateMachines.Core
             if (node == null)
                 return;
 
-            EvaluateInputs(node as MachineNode);
+            EvaluateInputs(node as WorkflowNode);
             node.Execute(this);
         }
 
@@ -45,7 +39,7 @@ namespace StateMachines.Core
             return null;
         }
 
-        public void EvaluateInputs(MachineNode node)
+        public void EvaluateInputs(WorkflowNode node)
         {
             if (node == null)
                 return;
@@ -57,7 +51,7 @@ namespace StateMachines.Core
                 foreach (Pin connectedPin in connectedPins)
                 {
                     EvaluateInputs(connectedPin.Node);
-                    StateFunction function = connectedPin.Node as StateFunction;
+                    WorkflowFunction function = connectedPin.Node as WorkflowFunction;
                     if (function != null)
                         function.Evaluate();
 
@@ -69,7 +63,7 @@ namespace StateMachines.Core
         }
 
 
-        private void AssignInputs(MachineNode node)
+        private void AssignInputs(WorkflowNode node)
         {
             var pins = node.GetPins(PinType.Input);
             foreach (var pin in pins)
@@ -92,6 +86,6 @@ namespace StateMachines.Core
 
         private readonly Dictionary<string, object> m_Variables;
 
-        private readonly StateMachine m_machine;
+        private readonly Workflow m_machine;
     }
 }

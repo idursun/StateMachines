@@ -7,12 +7,12 @@ namespace StateMachines.Core.Tests
     [TestFixture]
     public class StateMachineTests
     {
-        private StateMachine m_stateMachine;
+        private Workflow m_workflow;
 
         [SetUp]
         public void Setup()
         {
-            m_stateMachine = new StateMachine();
+            m_workflow = new Workflow();
         }
 
         [Test]
@@ -21,7 +21,7 @@ namespace StateMachines.Core.Tests
             MakeMessageNode node = new MakeMessageNode();
             Assert.That(delegate
             {
-                m_stateMachine.Connect(node.Pin(x => x.Input), node.Pin(x => x.Input));
+                m_workflow.Connect(node.Pin(x => x.Input), node.Pin(x => x.Input));
             }, Throws.Exception);
         }
 
@@ -29,7 +29,7 @@ namespace StateMachines.Core.Tests
         public void Test_Add_Sets_Guid_If_Empty()
         {
             MakeMessageNode makeMessageNode = new MakeMessageNode();
-            m_stateMachine.Add(makeMessageNode);
+            m_workflow.Add(makeMessageNode);
 
             Assert.That(makeMessageNode.Guid, Is.Not.EqualTo(Guid.Empty));
         }
@@ -43,8 +43,8 @@ namespace StateMachines.Core.Tests
             makeMessageNode1.Guid = newGuid;
             makeMessageNode2.Guid = newGuid;
 
-            m_stateMachine.Add(makeMessageNode1);
-            Assert.That(() => m_stateMachine.Add(makeMessageNode2), Throws.Exception); 
+            m_workflow.Add(makeMessageNode1);
+            Assert.That(() => m_workflow.Add(makeMessageNode2), Throws.Exception); 
         }
 
         [Test]
@@ -56,25 +56,25 @@ namespace StateMachines.Core.Tests
             var getMessage1Function = new GetMessageFunction("Hello");
             var getMessage2Function = new GetMessageFunction("World");
 
-            m_stateMachine.Add(initEvent);
-            m_stateMachine.Add(concatFunction);
-            m_stateMachine.Add(getMessage1Function);
-            m_stateMachine.Add(getMessage2Function);
-            m_stateMachine.Add(executionNode);
+            m_workflow.Add(initEvent);
+            m_workflow.Add(concatFunction);
+            m_workflow.Add(getMessage1Function);
+            m_workflow.Add(getMessage2Function);
+            m_workflow.Add(executionNode);
 
-            m_stateMachine.Connect(concatFunction.Pin(x => x.First), getMessage1Function.Pin(x => x.Message));
-            m_stateMachine.Connect(concatFunction.Pin(x => x.Second), getMessage2Function.Pin(x => x.Message));
-            m_stateMachine.Connect(executionNode.Pin(x => x.Input), concatFunction.Pin(x => x.Output));
-            m_stateMachine.Connect(initEvent.Pin(x => x.Fired), executionNode);
+            m_workflow.Connect(concatFunction.Pin(x => x.First), getMessage1Function.Pin(x => x.Message));
+            m_workflow.Connect(concatFunction.Pin(x => x.Second), getMessage2Function.Pin(x => x.Message));
+            m_workflow.Connect(executionNode.Pin(x => x.Input), concatFunction.Pin(x => x.Output));
+            m_workflow.Connect(initEvent.Pin(x => x.Fired), executionNode);
 
-            m_stateMachine.Compile();
-            m_stateMachine.PublishEvent(StateEventData.Empty);
+            m_workflow.Compile();
+            m_workflow.PublishEvent(WorkflowEventData.Empty);
 
             Assert.That(executionNode.Output, Is.EqualTo("Hello World !!!"), "Message is not correct");
         }
     }
 
-    public class GetMessageFunction: StateFunction
+    public class GetMessageFunction: WorkflowFunction
     {
         private readonly string m_initialMessage;
 
@@ -92,7 +92,7 @@ namespace StateMachines.Core.Tests
         }
     }
 
-    public class MakeMessageNode : ExecutionNode
+    public class MakeMessageNode : WorkflowExecutionNode
     {
         [Input]
         public string Input { get; set; }
@@ -100,7 +100,7 @@ namespace StateMachines.Core.Tests
         [Output]
         public string Output { get; set; }
 
-        public override void Execute(IStateExecutionContext context)
+        public override void Execute(IWorkflowExecutionContext context)
         {
             if (Input == null)
                 throw new Exception("Input value was not set");
@@ -109,7 +109,7 @@ namespace StateMachines.Core.Tests
         }
     }
 
-    public class ConcatFunction : StateFunction
+    public class ConcatFunction : WorkflowFunction
     {
         [Input]
         public string First { get; set; }

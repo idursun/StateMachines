@@ -1,6 +1,6 @@
 ﻿namespace StateMachines.Core.Logic
 {
-    public class BranchExecutionNode : ExecutionNode
+    public class BranchExecutionNode : WorkflowExecutionNode
     {
         [Input]
         public bool Condition { get; set; }
@@ -8,7 +8,7 @@
         public IExecutable True { get; set; }
         public IExecutable False { get; set; }
 
-        public override void Execute(IStateExecutionContext context)
+        public override void Execute(IWorkflowExecutionContext context)
         {
             if (Condition)
             {

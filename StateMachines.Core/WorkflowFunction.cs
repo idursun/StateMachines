@@ -1,6 +1,6 @@
 ﻿namespace StateMachines.Core
 {
-    public abstract class StateFunction : MachineNode
+    public abstract class WorkflowFunction : WorkflowNode
     {
         public abstract void Evaluate();
     }

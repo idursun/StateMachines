@@ -9,16 +9,16 @@ namespace StateMachines.Designer
 {
     public static class GraphControlExtensions
     {
-        public static StateMachineGraph ConvertToStateMachineGraph(this GraphControl graphControl)
+        public static WorkflowGraph ConvertToWorkflowGraph(this GraphControl graphControl)
         {
-            StateMachineGraph sm = new StateMachineGraph();
+            WorkflowGraph workflowGraph = new WorkflowGraph();
             var nodeToGuid = new Dictionary<Node, Guid>();
             foreach (Node node in graphControl.Nodes)
             {
                 Type type = (Type) node.Tag;
                 var nodeGuid = Guid.NewGuid();
                 nodeToGuid[node] = nodeGuid;
-                sm.Nodes.Add(Tuple.Create(nodeGuid, type.AssemblyQualifiedName));
+                workflowGraph.Nodes.Add(Tuple.Create(nodeGuid, type.AssemblyQualifiedName));
             }
 
             foreach (NodeConnection connection in graphControl.Nodes.SelectMany(x => x.Connections))
@@ -32,10 +32,10 @@ namespace StateMachines.Designer
                     nodeToGuid[connection.From.Node], fromItem.Text,
                     nodeToGuid[connection.To.Node], toItem.Text);
 
-                if (!sm.Connections.Contains(tuple))
-                    sm.Connections.Add(tuple);
+                if (!workflowGraph.Connections.Contains(tuple))
+                    workflowGraph.Connections.Add(tuple);
             }
-            return sm;
+            return workflowGraph;
         }
     }
 }

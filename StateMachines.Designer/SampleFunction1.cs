@@ -4,7 +4,7 @@ using StateMachines.Core;
 
 namespace StateMachines.Designer
 {
-    public class SampleFunction1 : StateFunction
+    public class SampleFunction1 : WorkflowFunction
     {
         [Input]
         public string First { get; set; }
@@ -19,7 +19,7 @@ namespace StateMachines.Designer
         }
     }
 
-    public class RandomIntegerFunction : StateFunction
+    public class RandomIntegerFunction : WorkflowFunction
     {
         [Input]
         public int Min { get; set; }
@@ -44,7 +44,7 @@ namespace StateMachines.Designer
         }
     }
 
-    public class RandomStringGenerator: StateFunction
+    public class RandomStringGenerator: WorkflowFunction
     {
         [Input]
         public int Length { get; set; }
@@ -70,7 +70,7 @@ namespace StateMachines.Designer
         }
     }
 
-    public class ConcatFunction : StateFunction
+    public class ConcatFunction : WorkflowFunction
     {
         [Input]
         public string First { get; set; }
@@ -86,27 +86,32 @@ namespace StateMachines.Designer
         }
     }
 
-    public class ShowMessageBox : ExecutionNode
+    public class ShowMessageBox : WorkflowExecutionNode
     {
         [Input]
         public string Message { get; set; }
 
         public IExecutable Next { get; set; }
 
-        public override void Execute(IStateExecutionContext context)
+        public override void Execute(IWorkflowExecutionContext context)
         {
             MessageBox.Show(Message);
             context.Execute(Next);
         }
     }
 
-    public class InitEventReceiver : StateEventReceiver
+    public class InitEventReceiver : WorkflowEventReceiver
     {
         public IExecutable Next { get; set; }
 
-        public override void Execute(IStateExecutionContext context)
+        public override void Execute(IWorkflowExecutionContext context)
         {
             context.Execute(Next);    
+        }
+
+        public override void SetEventData(WorkflowEventData eventData)
+        {
+            
         }
     }
 }

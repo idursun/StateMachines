@@ -12,7 +12,7 @@ namespace StateMachines.Core
             m_propertyInfo = propertyInfo;
         }
 
-        public MachineNode Node { get; set; }
+        public WorkflowNode Node { get; set; }
         public string Name { get; set; }
 
         protected bool Equals(Pin other)
