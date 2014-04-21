@@ -13,8 +13,18 @@ namespace StateMachines.Core
             Connections = new List<Tuple<Guid, string, Guid, string>>();
         }
 
-        public List<Tuple<Guid, string>> Nodes { get; set; }
-        public List<Tuple<Guid, string, Guid, string>> Connections { get; set; }
+        public List<Tuple<Guid, string>> Nodes { get; private set ; }
+        public List<Tuple<Guid, string, Guid, string>> Connections { get; private set; }
+
+        public void AddNode(Guid nodeGuid, string nodeType)
+        {
+            Nodes.Add(Tuple.Create(nodeGuid, nodeType));
+        }
+
+        public void AddConnection(Guid node1, string pin1, Guid node2, string pin2)
+        {
+            Connections.Add(Tuple.Create(node1, pin1, node2, pin2));
+        }
 
         public Workflow BuildWorkflow()
         {

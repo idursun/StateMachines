@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IExecutable.cs" />
+    <Compile Include="InitializeEventReceiver.cs" />
     <Compile Include="IWorkflowExecutionContext.cs" />
     <Compile Include="Logic\BranchExecutionNode.cs" />
     <Compile Include="WorkflowExecutionContext.cs" />

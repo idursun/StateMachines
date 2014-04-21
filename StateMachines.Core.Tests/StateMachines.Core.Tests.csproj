@@ -77,7 +77,7 @@
     <Compile Include="BranchExecutionTests.cs" />
     <Compile Include="EventReceiverTests.cs" />
     <Compile Include="WorkflowNodeTests.cs" />
-    <Compile Include="StateMachineGraphTests.cs" />
+    <Compile Include="WorkflowGraphTests.cs" />
     <Compile Include="StateMachineTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -87,7 +87,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
