@@ -6,12 +6,6 @@ namespace StateMachines.Core.Tests
     [TestFixture]
     public class WorkflowGraphTests
     {
-        [SetUp]
-        public void Setup()
-        {
-
-        }
-
         [Test]
         public void Test_BuildWorkflow_Converts_all_connections_and_nodes()
         {

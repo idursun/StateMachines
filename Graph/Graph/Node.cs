@@ -61,26 +61,6 @@ namespace Graph
 	{
 		public string			Title			{ get { return titleItem.Title; } set { titleItem.Title = value; } }
 
-		#region Collapsed
-		internal bool			internalCollapsed;
-		public bool				Collapsed		
-		{ 
-			get 
-			{
-				return (internalCollapsed && 
-						((state & RenderState.DraggedOver) == 0)) ||
-						nodeItems.Count == 0;
-			} 
-			set 
-			{
-				var oldValue = Collapsed;
-				internalCollapsed = value;
-				if (Collapsed != oldValue)
-					titleItem.ForceResize();
-			} 
-		}
-		#endregion
-
 		public bool				HasNoItems		{ get { return nodeItems.Count == 0; } }
 
 		public PointF			Location		{ get; set; }

@@ -756,9 +756,6 @@ namespace Graph
 		#region FindInputConnectorAt
 		static NodeConnector FindInputConnectorAt(Node node, PointF location)
 		{
-			if (node.itemsBounds == null || node.Collapsed)
-				return null;
-
 			foreach (var inputConnector in node.inputConnectors)
 			{
 				if (inputConnector.bounds.IsEmpty)
@@ -774,9 +771,6 @@ namespace Graph
 		#region FindOutputConnectorAt
 		static NodeConnector FindOutputConnectorAt(Node node, PointF location)
 		{
-			if (node.itemsBounds == null || node.Collapsed)
-				return null;
-
 			foreach (var outputConnector in node.outputConnectors)
 			{
 				if (outputConnector.bounds.IsEmpty)
@@ -1552,8 +1546,8 @@ namespace Graph
 										SetFlag(DragElement, RenderState.Incompatible, true);
 									} else
 									{
-                                        //SetFlag(DragElement, (destinationConnector.state & (RenderState.Compatible | RenderState.Incompatible)), true);
-										SetFlag(DragElement, (destinationConnector.state | (RenderState.Compatible)), true);
+                                        SetFlag(DragElement, (destinationConnector.state & (RenderState.Compatible | RenderState.Incompatible)), true);
+										//SetFlag(DragElement, (destinationConnector.state | (RenderState.Compatible)), true);
 									}
 								}
 							}
@@ -1841,7 +1835,6 @@ namespace Graph
 					goto case ElementType.Node;
 				case ElementType.Node:
 					var node = element as Node;
-					node.Collapsed = !node.Collapsed;
 					FocusElement = node;
 					this.Refresh();
 					break;
