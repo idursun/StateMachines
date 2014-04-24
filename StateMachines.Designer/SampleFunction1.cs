@@ -30,7 +30,7 @@ namespace StateMachines.Designer
         [Output]
         public int Result { get; set; }
 
-        private readonly Random rnd = new Random();
+        private static readonly Random random = new Random();
 
         public RandomIntegerFunction()
         {
@@ -40,7 +40,7 @@ namespace StateMachines.Designer
 
         public override void Evaluate()
         {
-            Result = rnd.Next(Min, Max);
+            Result = random.Next(Min, Max);
         }
     }
 
@@ -57,14 +57,14 @@ namespace StateMachines.Designer
             Length = 10;
         }
 
-        private readonly Random m_random = new Random();
+        private static readonly Random random = new Random();
 
         public override void Evaluate()
         {
             string name = "";
             for (int i = 0; i < Length; i++)
             {
-                name += (char)(65 + m_random.Next(26));
+                name += (char)(65 + random.Next(26));
             }
             Generated = name;
         }
