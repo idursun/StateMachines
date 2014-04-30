@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDebugger.cs" />
     <Compile Include="IExecutable.cs" />
     <Compile Include="InitializeEventReceiver.cs" />
     <Compile Include="IWorkflowExecutionContext.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Utils\ReflectionUtils.cs" />
     <Compile Include="WorkflowEventData.cs" />
     <Compile Include="WorkflowEventReceiver.cs" />
+    <Compile Include="WorkflowStateData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

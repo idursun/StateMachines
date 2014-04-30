@@ -144,8 +144,8 @@ namespace StateMachines.Designer
 
             try
             {
-                workflow.Compile();
-                workflow.PublishEvent(WorkflowEventData.Empty);
+                var executionContext = workflow.Compile();
+                executionContext.PublishEvent(WorkflowEventData.Empty);
             }
             catch (Exception exception)
             {

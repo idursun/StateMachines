@@ -32,8 +32,8 @@ namespace StateMachines.Core.Tests
             m_workflow.Connect(concatFunction.Pin(x => x.Output), executionNode.Pin(x => x.Input));
             m_workflow.Connect(eventSink1.Pin(x => x.Next), executionNode);
 
-            m_workflow.Compile();
-            m_workflow.PublishEvent(new DataReceivedEventData()
+            var executionContext = m_workflow.Compile();
+            executionContext.PublishEvent(new DataReceivedEventData()
             {
                 Data = "DATA"
             });

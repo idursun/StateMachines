@@ -52,52 +52,13 @@ namespace StateMachines.Core
             FlowConnections.Add(Tuple.Create(pin1, executable));
         }
 
-        public void Compile()
+        public IWorkflowExecutionContext Compile()
         {
             foreach (var flowConnection in FlowConnections)
             {
                 flowConnection.Item1.Set(flowConnection.Item2);
             }
-            m_compiled = true;
-        }
-
-        public void PublishEvent(WorkflowEventData workflowEventData)
-        {
-            if (!m_compiled)
-                throw new Exception("graph is not compiled");
-
-            events.Enqueue(workflowEventData);
-
-            Signal();
-        }
-
-        public void Signal()
-        {
-            if (events.Count == 0)
-                return;
-
-            WorkflowEventData workflowEventData = events.Dequeue();
-
-            IEnumerable<WorkflowEventReceiver> matchingEventSinks = EventSinksNodes().Where(x => x.Handles(workflowEventData)).ToList();
-
-            WorkflowExecutionContext context = new WorkflowExecutionContext(this);
-            //first set data for every sink
-            foreach (var matchingNode in matchingEventSinks)
-            {
-                matchingNode.SetEventData(workflowEventData);
-            }
-
-            // and then execute each node
-            foreach (var matchingNode in matchingEventSinks)
-            {
-                context.EvaluateInputs(matchingNode);
-                context.Execute(matchingNode);
-            }
-        }
-
-        private IEnumerable<WorkflowEventReceiver> EventSinksNodes()
-        {
-            return Nodes.Where(x => x is WorkflowEventReceiver).Cast<WorkflowEventReceiver>().ToList();
+            return new WorkflowExecutionContext(this);
         }
 
         public IEnumerable<Pin> GetConnectedPins(Pin input)
@@ -111,7 +72,9 @@ namespace StateMachines.Core
             }
         }
 
-        private readonly Queue<WorkflowEventData> events = new Queue<WorkflowEventData>();
-        private bool m_compiled;
+        public IEnumerable<WorkflowEventReceiver> EventSinksNodes()
+        {
+            return Nodes.Where(x => x is WorkflowEventReceiver).Cast<WorkflowEventReceiver>().ToList();
+        }
     }
 }
