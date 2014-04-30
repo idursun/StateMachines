@@ -76,11 +76,12 @@ namespace StateMachines.Core
             if (stateData == null) 
                 throw new ArgumentNullException("stateData");
 
-            m_variables.Clear();
-            m_variables = new Dictionary<string, object>(stateData.Variables);
             WorkflowNode workflowNode = m_workflow.Nodes.FirstOrDefault(x => x.Guid == stateData.ExecutingNodeGuid);
             if (workflowNode == null)
                 throw new InvalidWorkflowStateException(string.Format("Node with guid {0} does not exist", stateData.ExecutingNodeGuid));
+
+            m_variables.Clear();
+            m_variables = new Dictionary<string, object>(stateData.Variables ?? new Dictionary<string, object>());
 
             EvaluateInputs(workflowNode);
 
