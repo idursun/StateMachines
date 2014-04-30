@@ -7,6 +7,8 @@ namespace StateMachines.Core
 {
     public class WorkflowExecutionContext : IWorkflowExecutionContext
     {
+        public ExecutionState State { get; private set; }
+
         protected internal WorkflowExecutionContext(Workflow workflow)
         {
             m_workflow = workflow;
@@ -23,7 +25,7 @@ namespace StateMachines.Core
             if (workflowNode != null)
             {
                 EvaluateInputs(workflowNode);
-                if (State == ExecutionState.Executing && m_debugger.IsHit(workflowNode.Guid))
+                if (State == ExecutionState.Executing && IsHit(workflowNode.Guid))
                 {
                     m_debugger.Break(new WorkflowStateData()
                     {
@@ -68,7 +70,7 @@ namespace StateMachines.Core
                 Execute(matchingNode);
             }
         }
-        
+
         public void Resume(WorkflowStateData stateData)
         {
             if (stateData == null) 
@@ -78,24 +80,39 @@ namespace StateMachines.Core
             m_variables = new Dictionary<string, object>(stateData.Variables);
             WorkflowNode workflowNode = m_workflow.Nodes.FirstOrDefault(x => x.Guid == stateData.ExecutingNodeGuid);
             if (workflowNode == null)
-            {
-                throw new Exception("Invalid workflow state");
-            }
-            
+                throw new InvalidWorkflowStateException(string.Format("Node with guid {0} does not exist", stateData.ExecutingNodeGuid));
+
             EvaluateInputs(workflowNode);
 
             IExecutable node = workflowNode as IExecutable;
             if (node == null)
-            {
-                throw new Exception("Invalid workflow state");
-            }
+                throw new InvalidWorkflowStateException("Node type is not invalid");
+
             State = ExecutionState.Resuming;
             Execute(node);
         }
 
-        public ExecutionState State { get; private set; }
+        public void Attach(IDebugger debugger)
+        {
+            m_debugger = debugger;
+        }
 
-        public void EvaluateInputs(WorkflowNode node)
+        public void SetBreakpoint(Guid nodeGuid)
+        {
+            m_breakpoints.Add(nodeGuid);
+        }
+
+        public void RemoveBreakpoint(Guid nodeGuid)
+        {
+            m_breakpoints.Remove(nodeGuid);
+        }
+
+        private Dictionary<string, object> m_variables;
+
+
+        private readonly HashSet<Guid> m_breakpoints = new HashSet<Guid>();
+
+        private void EvaluateInputs(WorkflowNode node)
         {
             if (node == null)
                 return;
@@ -150,6 +167,11 @@ namespace StateMachines.Core
             }
         }
 
+        private bool IsHit(Guid guid)
+        {
+            return m_breakpoints.Contains(guid);
+        }
+
         private static string MakeCacheKey(Pin pin)
         {
             if (pin == null)
@@ -160,22 +182,10 @@ namespace StateMachines.Core
         private readonly Queue<WorkflowEventData> events = new Queue<WorkflowEventData>();
         private readonly Workflow m_workflow;
         private IDebugger m_debugger;
-        private Dictionary<string, object> m_variables;
-
-
-        public void Attach(IDebugger debugger)
-        {
-            m_debugger = debugger;
-        }
     }
 
     public class NullDebugger : IDebugger
     {
-        public bool IsHit(Guid nodeGuid)
-        {
-            return false;
-        }
-
         public void Step()
         {
         }

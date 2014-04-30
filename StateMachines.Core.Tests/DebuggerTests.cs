@@ -36,8 +36,9 @@ namespace StateMachines.Core.Tests
             var executionContext = m_workflow.Compile();
             Mock<IDebugger> debuggerMock = new Mock<IDebugger>();
 
-            debuggerMock.Setup(x => x.IsHit(m_simpleNode2.Guid)).Returns(true);
             executionContext.Attach(debuggerMock.Object);
+            executionContext.SetBreakpoint(m_simpleNode2.Guid);
+
             executionContext.PublishEvent(new WorkflowEventData());
 
             debuggerMock.Verify(x => x.Break(It.IsAny<WorkflowStateData>()));
@@ -48,7 +49,6 @@ namespace StateMachines.Core.Tests
         {
             var executionContext = m_workflow.Compile();
             Mock<IDebugger> debuggerMock = new Mock<IDebugger>();
-            debuggerMock.Setup(x => x.IsHit(m_simpleNode2.Guid)).Returns(true);
             WorkflowStateData stateData = null;
             debuggerMock.Setup(x => x.Break(It.IsAny<WorkflowStateData>())).Callback(delegate(WorkflowStateData sd)
             {
@@ -56,6 +56,7 @@ namespace StateMachines.Core.Tests
             });
 
             executionContext.Attach(debuggerMock.Object);
+            executionContext.SetBreakpoint(m_simpleNode2.Guid);
             executionContext.PublishEvent(new WorkflowEventData());
 
             Assert.IsFalse(m_simpleNode3.IsCalled);
