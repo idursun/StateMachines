@@ -9,9 +9,9 @@ namespace StateMachines.Core
     {
         public ExecutionState State { get; private set; }
 
-        protected internal WorkflowExecutionContext(WorkflowBuilder workflowBuilder)
+        protected internal WorkflowExecutionContext(IWorkflowGraph graph)
         {
-            m_workflowBuilder = workflowBuilder;
+            m_workflowGraph = graph;
             m_variables = new Dictionary<string, object>();
             m_debugger = new NullDebugger();
         }
@@ -54,7 +54,7 @@ namespace StateMachines.Core
 
             WorkflowEventData workflowEventData = events.Dequeue();
 
-            IEnumerable<WorkflowEventReceiver> matchingEventSinks = m_workflowBuilder.EventSinksNodes().Where(x => x.Handles(workflowEventData)).ToList();
+            IEnumerable<WorkflowEventReceiver> matchingEventSinks = m_workflowGraph.EventSinksNodes().Where(x => x.Handles(workflowEventData)).ToList();
 
             State = ExecutionState.Executing;
             //first set data for every sink
@@ -76,7 +76,7 @@ namespace StateMachines.Core
             if (stateData == null) 
                 throw new ArgumentNullException("stateData");
 
-            WorkflowNode workflowNode = m_workflowBuilder.Nodes.FirstOrDefault(x => x.Guid == stateData.ExecutingNodeGuid);
+            WorkflowNode workflowNode = m_workflowGraph.FindNodeByGUID(stateData.ExecutingNodeGuid);
             if (workflowNode == null)
                 throw new InvalidWorkflowStateException(string.Format("Node with guid {0} does not exist", stateData.ExecutingNodeGuid));
 
@@ -108,11 +108,6 @@ namespace StateMachines.Core
             m_breakpoints.Remove(nodeGuid);
         }
 
-        private Dictionary<string, object> m_variables;
-
-
-        private readonly HashSet<Guid> m_breakpoints = new HashSet<Guid>();
-
         private void EvaluateInputs(WorkflowNode node)
         {
             if (node == null)
@@ -121,7 +116,7 @@ namespace StateMachines.Core
             var nodeInputPins = node.GetPins(PinType.Input);
             foreach (var inputPin in nodeInputPins)
             {
-                IEnumerable<Pin> connectedPins = m_workflowBuilder.GetConnectedPins(inputPin);
+                IEnumerable<Pin> connectedPins = m_workflowGraph.GetConnectedPins(inputPin);
                 foreach (Pin connectedPin in connectedPins)
                 {
                     EvaluateInputs(connectedPin.Node);
@@ -136,30 +131,12 @@ namespace StateMachines.Core
             AssignInputs(node);
         }
 
-        protected void Set(Pin pin, object value)
-        {
-            string key = MakeCacheKey(pin);
-            m_variables[key] = value;
-        }
-
-        protected object Get(Pin pin)
-        {
-            if (pin == null) throw new ArgumentNullException("pin");
-
-            string key = MakeCacheKey(pin);
-            if (m_variables.ContainsKey(key))
-            {
-                return m_variables[key];
-            }
-            return null;
-        }
-
         private void AssignInputs(WorkflowNode node)
         {
             var pins = node.GetPins(PinType.Input);
             foreach (var pin in pins)
             {
-                IEnumerable<Pin> connectedPins = m_workflowBuilder.GetConnectedPins(pin);
+                IEnumerable<Pin> connectedPins = m_workflowGraph.GetConnectedPins(pin);
                 foreach (var connectedPin in connectedPins)
                 {
                     object o = this.Get(connectedPin);
@@ -180,24 +157,28 @@ namespace StateMachines.Core
             return pin.Node.GetType() + "" + pin.Node.Guid.ToString() + "::" + pin.Name;
         }
 
+        protected void Set(Pin pin, object value)
+        {
+            string key = MakeCacheKey(pin);
+            m_variables[key] = value;
+        }
+
+        protected object Get(Pin pin)
+        {
+            if (pin == null) throw new ArgumentNullException("pin");
+
+            string key = MakeCacheKey(pin);
+            if (m_variables.ContainsKey(key))
+            {
+                return m_variables[key];
+            }
+            return null;
+        }
+
         private readonly Queue<WorkflowEventData> events = new Queue<WorkflowEventData>();
-        private readonly WorkflowBuilder m_workflowBuilder;
+        private Dictionary<string, object> m_variables;
+        private readonly HashSet<Guid> m_breakpoints = new HashSet<Guid>();
+        private readonly IWorkflowGraph m_workflowGraph;
         private IDebugger m_debugger;
-    }
-
-    public class NullDebugger : IDebugger
-    {
-        public void Step()
-        {
-        }
-
-        public void Resume()
-        {
-        }
-
-        public void Break(WorkflowStateData workflowStateData)
-        {
-            
-        }
     }
 }

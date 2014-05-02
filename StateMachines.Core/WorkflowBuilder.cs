@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace StateMachines.Core
 {
-    public class WorkflowBuilder
+    public class WorkflowBuilder : IWorkflowGraph
     {
         public WorkflowBuilder()
         {
@@ -75,6 +75,11 @@ namespace StateMachines.Core
         public IEnumerable<WorkflowEventReceiver> EventSinksNodes()
         {
             return Nodes.Where(x => x is WorkflowEventReceiver).Cast<WorkflowEventReceiver>().ToList();
+        }
+
+        public WorkflowNode FindNodeByGUID(Guid nodeGuid)
+        {
+            return Nodes.FirstOrDefault(x => x.Guid == nodeGuid);
         }
     }
 }

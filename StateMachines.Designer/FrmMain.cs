@@ -139,12 +139,9 @@ namespace StateMachines.Designer
 
         private void m_btnCompile_Click(object sender, EventArgs e)
         {
-            WorkflowGraph workflowGraph = graphControl1.ConvertToWorkflowGraph();
-            WorkflowBuilder workflowBuilder = workflowGraph.BuildWorkflow();
-
             try
             {
-                var executionContext = workflowBuilder.Compile();
+                var executionContext = graphControl1.Compile();
                 executionContext.PublishEvent(WorkflowEventData.Empty);
             }
             catch (Exception exception)

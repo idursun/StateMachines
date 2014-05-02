@@ -4,21 +4,29 @@ using System.Linq;
 using Graph;
 using Graph.Items;
 using StateMachines.Core;
+using StateMachines.Core.Utils;
 
 namespace StateMachines.Designer
 {
     public static class GraphControlExtensions
     {
-        public static WorkflowGraph ConvertToWorkflowGraph(this GraphControl graphControl)
+        public static IWorkflowExecutionContext Compile(this GraphControl graphControl)
         {
-            WorkflowGraph workflowGraph = new WorkflowGraph();
+            WorkflowBuilder builder = new WorkflowBuilder();
             var nodeToGuid = new Dictionary<Node, Guid>();
-            foreach (Node node in graphControl.Nodes)
+            var nodes = new Dictionary<Guid, WorkflowNode>();
+            foreach (Node graphNode in graphControl.Nodes)
             {
-                Type type = (Type) node.Tag;
+                Type type = (Type)graphNode.Tag;
                 var nodeGuid = Guid.NewGuid();
-                nodeToGuid[node] = nodeGuid;
-                workflowGraph.Nodes.Add(Tuple.Create(nodeGuid, type.AssemblyQualifiedName));
+                nodeToGuid[graphNode] = nodeGuid;
+                WorkflowNode workflowNode = Activator.CreateInstance(type) as WorkflowNode;
+                if (workflowNode != null)
+                {
+                    workflowNode.Guid = nodeGuid;
+                    builder.Add(workflowNode);
+                    nodes[nodeGuid] = workflowNode;
+                }
             }
 
             foreach (NodeConnection connection in graphControl.Nodes.SelectMany(x => x.Connections))
@@ -28,14 +36,18 @@ namespace StateMachines.Designer
                 if (fromItem == null || toItem == null)
                     continue;
 
-                var tuple = Tuple.Create(
-                    nodeToGuid[connection.From.Node], fromItem.Text,
-                    nodeToGuid[connection.To.Node], toItem.Text);
-
-                if (!workflowGraph.Connections.Contains(tuple))
-                    workflowGraph.Connections.Add(tuple);
+                Guid fromNode = nodeToGuid[connection.From.Node];
+                Guid toNode = nodeToGuid[connection.To.Node];
+                if (toItem.Text == "Exec")
+                {
+                    builder.Connect(nodes[fromNode].Pin(fromItem.Text), nodes[toNode] as IExecutable);
+                }
+                else
+                {
+                    builder.Connect(nodes[fromNode].Pin(fromItem.Text), nodes[toNode].Pin(toItem.Text));
+                }
             }
-            return workflowGraph;
+            return builder.Compile();
         }
     }
 }

@@ -79,7 +79,6 @@
     <Compile Include="WorkflowEventReceiverTests.cs" />
     <Compile Include="WorkflowExecutionContextTests.cs" />
     <Compile Include="WorkflowNodeTests.cs" />
-    <Compile Include="WorkflowGraphTests.cs" />
     <Compile Include="WorkflowBuilderTests.cs" />
   </ItemGroup>
   <ItemGroup>
