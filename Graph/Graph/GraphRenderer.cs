@@ -160,9 +160,7 @@ namespace Graph
                     //    graphics.DrawArc(pen, bounds, 270, 180);
                     //}
                 }
-
         }
-
 
 		static void RenderArrow(Graphics graphics, RectangleF bounds, RenderState connectionState)
 		{
@@ -564,7 +562,7 @@ namespace Graph
 			}
 		    centerX = 0;
 		    centerY = 0;
-		    return points;
+            return points;
 			//*/
 			var angles	= new PointF[points.Count - 1];
 			var lengths = new float[points.Count - 1];
@@ -665,9 +663,9 @@ namespace Graph
 			float centerY;
 			using (var path = GetArrowLinePath(x1, y1, x, y, out centerX, out centerY, true, 0.0f))
 			{
-				using (var brush = new SolidBrush(GetArrowLineColor(state)))
+				using (var pen = new Pen(GetArrowLineColor(state), 4))
 				{
-					graphics.FillPath(brush, path);
+					graphics.DrawPath(pen, path);
 				}
 			}
 		}
@@ -687,9 +685,9 @@ namespace Graph
 			float centerY;
 			using (var path = GetArrowLinePath(x, y, x2, y2, out centerX, out centerY, true, 0.0f))
 			{
-				using (var brush = new SolidBrush(GetArrowLineColor(state)))
+				using (var pen = new Pen(GetArrowLineColor(state), 4))
 				{
-					graphics.FillPath(brush, path);
+					graphics.DrawPath(pen, path);
 				}
 			}
 		}
