@@ -9,9 +9,9 @@ namespace StateMachines.Core
     {
         public ExecutionState State { get; private set; }
 
-        protected internal WorkflowExecutionContext(Workflow workflow)
+        protected internal WorkflowExecutionContext(WorkflowBuilder workflowBuilder)
         {
-            m_workflow = workflow;
+            m_workflowBuilder = workflowBuilder;
             m_variables = new Dictionary<string, object>();
             m_debugger = new NullDebugger();
         }
@@ -54,7 +54,7 @@ namespace StateMachines.Core
 
             WorkflowEventData workflowEventData = events.Dequeue();
 
-            IEnumerable<WorkflowEventReceiver> matchingEventSinks = m_workflow.EventSinksNodes().Where(x => x.Handles(workflowEventData)).ToList();
+            IEnumerable<WorkflowEventReceiver> matchingEventSinks = m_workflowBuilder.EventSinksNodes().Where(x => x.Handles(workflowEventData)).ToList();
 
             State = ExecutionState.Executing;
             //first set data for every sink
@@ -76,7 +76,7 @@ namespace StateMachines.Core
             if (stateData == null) 
                 throw new ArgumentNullException("stateData");
 
-            WorkflowNode workflowNode = m_workflow.Nodes.FirstOrDefault(x => x.Guid == stateData.ExecutingNodeGuid);
+            WorkflowNode workflowNode = m_workflowBuilder.Nodes.FirstOrDefault(x => x.Guid == stateData.ExecutingNodeGuid);
             if (workflowNode == null)
                 throw new InvalidWorkflowStateException(string.Format("Node with guid {0} does not exist", stateData.ExecutingNodeGuid));
 
@@ -121,7 +121,7 @@ namespace StateMachines.Core
             var nodeInputPins = node.GetPins(PinType.Input);
             foreach (var inputPin in nodeInputPins)
             {
-                IEnumerable<Pin> connectedPins = m_workflow.GetConnectedPins(inputPin);
+                IEnumerable<Pin> connectedPins = m_workflowBuilder.GetConnectedPins(inputPin);
                 foreach (Pin connectedPin in connectedPins)
                 {
                     EvaluateInputs(connectedPin.Node);
@@ -159,7 +159,7 @@ namespace StateMachines.Core
             var pins = node.GetPins(PinType.Input);
             foreach (var pin in pins)
             {
-                IEnumerable<Pin> connectedPins = m_workflow.GetConnectedPins(pin);
+                IEnumerable<Pin> connectedPins = m_workflowBuilder.GetConnectedPins(pin);
                 foreach (var connectedPin in connectedPins)
                 {
                     object o = this.Get(connectedPin);
@@ -181,7 +181,7 @@ namespace StateMachines.Core
         }
 
         private readonly Queue<WorkflowEventData> events = new Queue<WorkflowEventData>();
-        private readonly Workflow m_workflow;
+        private readonly WorkflowBuilder m_workflowBuilder;
         private IDebugger m_debugger;
     }
 

@@ -7,7 +7,7 @@ namespace StateMachines.Core.Tests
     [TestFixture]
     public class DebuggerTests
     {
-        private Workflow m_workflow;
+        private WorkflowBuilder m_workflowBuilder;
         private SimpleNode m_simpleNode1;
         private SimpleNode m_simpleNode2;
         private SimpleNode m_simpleNode3;
@@ -15,25 +15,25 @@ namespace StateMachines.Core.Tests
         [SetUp]
         public void Setup()
         {
-            m_workflow = new Workflow();
+            m_workflowBuilder = new WorkflowBuilder();
             InitializeEventReceiver receiver = new InitializeEventReceiver();
             m_simpleNode1 = new SimpleNode();
             m_simpleNode2 = new SimpleNode();
             m_simpleNode3 = new SimpleNode();
-            m_workflow.Add(receiver);
-            m_workflow.Add(m_simpleNode1);
-            m_workflow.Add(m_simpleNode2);
-            m_workflow.Add(m_simpleNode3);
+            m_workflowBuilder.Add(receiver);
+            m_workflowBuilder.Add(m_simpleNode1);
+            m_workflowBuilder.Add(m_simpleNode2);
+            m_workflowBuilder.Add(m_simpleNode3);
 
-            m_workflow.Connect(receiver.Pin(x => x.Fired), m_simpleNode1);
-            m_workflow.Connect(m_simpleNode1.Pin(x => x.Next), m_simpleNode2);
-            m_workflow.Connect(m_simpleNode2.Pin(x => x.Next), m_simpleNode3);
+            m_workflowBuilder.Connect(receiver.Pin(x => x.Fired), m_simpleNode1);
+            m_workflowBuilder.Connect(m_simpleNode1.Pin(x => x.Next), m_simpleNode2);
+            m_workflowBuilder.Connect(m_simpleNode2.Pin(x => x.Next), m_simpleNode3);
         }
 
         [Test]
         public void Test_SetBreakpoint_StopsAtTheBreakpoint()
         {
-            var executionContext = m_workflow.Compile();
+            var executionContext = m_workflowBuilder.Compile();
             Mock<IDebugger> debuggerMock = new Mock<IDebugger>();
 
             executionContext.Attach(debuggerMock.Object);
@@ -47,7 +47,7 @@ namespace StateMachines.Core.Tests
         [Test]
         public void Test_SetBreakpoint_Resumes()
         {
-            var executionContext = m_workflow.Compile();
+            var executionContext = m_workflowBuilder.Compile();
             Mock<IDebugger> debuggerMock = new Mock<IDebugger>();
             WorkflowStateData stateData = null;
             debuggerMock.Setup(x => x.Break(It.IsAny<WorkflowStateData>())).Callback(delegate(WorkflowStateData sd)

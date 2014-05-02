@@ -26,9 +26,9 @@ namespace StateMachines.Core
             Connections.Add(Tuple.Create(node1, pin1, node2, pin2));
         }
 
-        public Workflow BuildWorkflow()
+        public WorkflowBuilder BuildWorkflow()
         {
-            Workflow workflowGraph = new Workflow();
+            WorkflowBuilder workflowBuilderGraph = new WorkflowBuilder();
             foreach (var tuple in this.Nodes)
             {
                 Guid guid = tuple.Item1;
@@ -39,23 +39,23 @@ namespace StateMachines.Core
                     throw new Exception("type cannot be casted to WorkflowNode");
 
                 workflowNode.Guid = guid;
-                workflowGraph.Add(workflowNode);
+                workflowBuilderGraph.Add(workflowNode);
             }
 
             foreach (var tuple in this.Connections)
             {
-                var node1 = workflowGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item1);
-                var node2 = workflowGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item3);
+                var node1 = workflowBuilderGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item1);
+                var node2 = workflowBuilderGraph.Nodes.FirstOrDefault(x => x.Guid == tuple.Item3);
                 if (tuple.Item4 == "Exec")
                 {
-                    workflowGraph.Connect(node1.Pin(tuple.Item2), node2 as IExecutable);
+                    workflowBuilderGraph.Connect(node1.Pin(tuple.Item2), node2 as IExecutable);
                 }
                 else
                 {
-                    workflowGraph.Connect(node1.Pin(tuple.Item2), node2.Pin(tuple.Item4));
+                    workflowBuilderGraph.Connect(node1.Pin(tuple.Item2), node2.Pin(tuple.Item4));
                 }
             }
-            return workflowGraph;
+            return workflowBuilderGraph;
         }
     }
 }

@@ -6,12 +6,12 @@ namespace StateMachines.Core.Tests
     [TestFixture]
     public class EventReceiverTests
     {
-        private Workflow m_workflow;
+        private WorkflowBuilder m_workflowBuilder;
 
         [SetUp]
         public void Setup()
         {
-            m_workflow = new Workflow();
+            m_workflowBuilder = new WorkflowBuilder();
         }
 
         [Test]
@@ -22,17 +22,17 @@ namespace StateMachines.Core.Tests
             var executionNode = new MakeMessageNode();
             var concatFunction = new ConcatFunction();
 
-            m_workflow.Add(eventSink1);
-            m_workflow.Add(eventSink2);
-            m_workflow.Add(concatFunction);
-            m_workflow.Add(executionNode);
+            m_workflowBuilder.Add(eventSink1);
+            m_workflowBuilder.Add(eventSink2);
+            m_workflowBuilder.Add(concatFunction);
+            m_workflowBuilder.Add(executionNode);
 
-            m_workflow.Connect(eventSink1.Pin(x => x.Data), concatFunction.Pin(x => x.First));
-            m_workflow.Connect(eventSink2.Pin(x => x.Data), concatFunction.Pin(x => x.Second));
-            m_workflow.Connect(concatFunction.Pin(x => x.Output), executionNode.Pin(x => x.Input));
-            m_workflow.Connect(eventSink1.Pin(x => x.Next), executionNode);
+            m_workflowBuilder.Connect(eventSink1.Pin(x => x.Data), concatFunction.Pin(x => x.First));
+            m_workflowBuilder.Connect(eventSink2.Pin(x => x.Data), concatFunction.Pin(x => x.Second));
+            m_workflowBuilder.Connect(concatFunction.Pin(x => x.Output), executionNode.Pin(x => x.Input));
+            m_workflowBuilder.Connect(eventSink1.Pin(x => x.Next), executionNode);
 
-            var executionContext = m_workflow.Compile();
+            var executionContext = m_workflowBuilder.Compile();
             executionContext.PublishEvent(new DataReceivedEventData()
             {
                 Data = "DATA"

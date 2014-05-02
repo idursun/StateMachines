@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace StateMachines.Core
 {
-    public class Workflow
+    public class WorkflowBuilder
     {
-        public Workflow()
+        public WorkflowBuilder()
         {
             Nodes = new List<WorkflowNode>();
             Connections = new List<Tuple<Pin, Pin>>();

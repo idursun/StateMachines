@@ -17,11 +17,11 @@ namespace StateMachines.Core.Tests
             workflowGraph.AddNode(node2, typeof(SimpleNode).AssemblyQualifiedName);
             workflowGraph.AddConnection(node1, "Next", node2, "Exec");
 
-            Workflow workflow = workflowGraph.BuildWorkflow();
+            WorkflowBuilder workflowBuilder = workflowGraph.BuildWorkflow();
 
-            Assert.That(workflow.Nodes.Count, Is.EqualTo(2));
-            Assert.That(workflow.Connections.Count, Is.EqualTo(0));
-            Assert.That(workflow.FlowConnections.Count, Is.EqualTo(1));
+            Assert.That(workflowBuilder.Nodes.Count, Is.EqualTo(2));
+            Assert.That(workflowBuilder.Connections.Count, Is.EqualTo(0));
+            Assert.That(workflowBuilder.FlowConnections.Count, Is.EqualTo(1));
         } 
         
         [Test]

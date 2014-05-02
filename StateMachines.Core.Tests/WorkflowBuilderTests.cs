@@ -5,14 +5,14 @@ using StateMachines.Core.Utils;
 namespace StateMachines.Core.Tests
 {
     [TestFixture]
-    public class WorkflowTests
+    public class WorkflowBuilderTests
     {
-        private Workflow m_workflow;
+        private WorkflowBuilder m_workflowBuilder;
 
         [SetUp]
         public void Setup()
         {
-            m_workflow = new Workflow();
+            m_workflowBuilder = new WorkflowBuilder();
         }
 
         [Test]
@@ -21,7 +21,7 @@ namespace StateMachines.Core.Tests
             MakeMessageNode node = new MakeMessageNode();
             Assert.That(delegate
             {
-                m_workflow.Connect(node.Pin(x => x.Input), node.Pin(x => x.Input));
+                m_workflowBuilder.Connect(node.Pin(x => x.Input), node.Pin(x => x.Input));
             }, Throws.Exception);
         }
 
@@ -29,7 +29,7 @@ namespace StateMachines.Core.Tests
         public void Test_Add_Sets_Guid_If_Empty()
         {
             MakeMessageNode makeMessageNode = new MakeMessageNode();
-            m_workflow.Add(makeMessageNode);
+            m_workflowBuilder.Add(makeMessageNode);
 
             Assert.That(makeMessageNode.Guid, Is.Not.EqualTo(Guid.Empty));
         }
@@ -43,8 +43,8 @@ namespace StateMachines.Core.Tests
             makeMessageNode1.Guid = newGuid;
             makeMessageNode2.Guid = newGuid;
 
-            m_workflow.Add(makeMessageNode1);
-            Assert.That(() => m_workflow.Add(makeMessageNode2), Throws.Exception); 
+            m_workflowBuilder.Add(makeMessageNode1);
+            Assert.That(() => m_workflowBuilder.Add(makeMessageNode2), Throws.Exception); 
         }
 
     }
