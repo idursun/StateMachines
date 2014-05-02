@@ -76,11 +76,11 @@
     <Compile Include="DebuggerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logic\BranchExecutionTests.cs" />
-    <Compile Include="EventReceiverTests.cs" />
+    <Compile Include="WorkflowEventReceiverTests.cs" />
     <Compile Include="WorkflowExecutionContextTests.cs" />
     <Compile Include="WorkflowNodeTests.cs" />
     <Compile Include="WorkflowGraphTests.cs" />
-    <Compile Include="WorkflowTests.cs" />
+    <Compile Include="WorkflowBuilderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StateMachines.Core\StateMachines.Core.csproj">

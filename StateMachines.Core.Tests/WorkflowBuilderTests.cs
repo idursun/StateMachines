@@ -35,7 +35,7 @@ namespace StateMachines.Core.Tests
         }
 
         [Test]
-        public void Test_Add_ChecksGuidForDuplicate()
+        public void Test_Add_Throws_If_Guid_Is_Already_Added()
         {
             MakeMessageNode makeMessageNode1 = new MakeMessageNode();
             MakeMessageNode makeMessageNode2 = new MakeMessageNode();
