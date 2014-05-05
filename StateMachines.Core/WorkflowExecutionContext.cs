@@ -25,8 +25,9 @@ namespace StateMachines.Core
             if (workflowNode != null)
             {
                 EvaluateInputs(workflowNode);
-                if (State == ExecutionState.Executing && IsHit(workflowNode.Guid))
+                if (State == ExecutionState.Executing && IsBreakpointHit(workflowNode.Guid))
                 {
+                    State = ExecutionState.Debugging;
                     m_debugger.Break(new WorkflowStateData()
                     {
                         ExecutingNodeGuid = workflowNode.Guid,
@@ -145,7 +146,7 @@ namespace StateMachines.Core
             }
         }
 
-        private bool IsHit(Guid guid)
+        private bool IsBreakpointHit(Guid guid)
         {
             return m_breakpoints.Contains(guid);
         }

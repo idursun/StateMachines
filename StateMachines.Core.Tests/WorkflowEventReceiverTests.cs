@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 
 namespace StateMachines.Core.Tests
 {
@@ -17,6 +18,21 @@ namespace StateMachines.Core.Tests
         {
             var eventSink = new DataReceivedEventReceiver();
             Assert.That(eventSink.Handles(null), Is.False);
+        }
+
+        [Test]
+        public void Test_SetEventData_is_called()
+        {
+            WorkflowBuilder builder = new WorkflowBuilder();
+            DataReceivedEventReceiver eventReceiver = new DataReceivedEventReceiver();
+
+            builder.Add(eventReceiver);
+
+            var context = builder.Compile();
+            
+            context.PublishEvent(new DataReceivedEventData() { Data = "data"});
+
+            Assert.That(eventReceiver.Data, Is.EqualTo("data"));
         }
     }
 

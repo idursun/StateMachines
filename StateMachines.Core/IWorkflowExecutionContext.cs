@@ -19,6 +19,6 @@ namespace StateMachines.Core
         Idle,
         Executing,
         Resuming,
-        Stopped,
+        Debugging,
     }
 }
