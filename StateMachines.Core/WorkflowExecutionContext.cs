@@ -25,16 +25,17 @@ namespace StateMachines.Core
             if (workflowNode != null)
             {
                 EvaluateInputs(workflowNode);
-                if (State == ExecutionState.Executing && IsBreakpointHit(workflowNode.Guid))
+            }
+
+            if (State == ExecutionState.Executing && IsBreakpointHit(node))
+            {
+                State = ExecutionState.Debugging;
+                m_debugger.Break(new WorkflowStateData()
                 {
-                    State = ExecutionState.Debugging;
-                    m_debugger.Break(new WorkflowStateData()
-                    {
-                        ExecutingNodeGuid = workflowNode.Guid,
-                        Variables = m_variables
-                    });
-                    return;
-                }
+                    ExecutingNode = node,
+                    Variables = m_variables
+                });
+                return;
             }
 
             State = ExecutionState.Executing;
@@ -77,21 +78,14 @@ namespace StateMachines.Core
             if (stateData == null) 
                 throw new ArgumentNullException("stateData");
 
-            WorkflowNode workflowNode = m_workflowGraph.FindNodeByGUID(stateData.ExecutingNodeGuid);
-            if (workflowNode == null)
-                throw new InvalidWorkflowStateException(string.Format("Node with guid {0} does not exist", stateData.ExecutingNodeGuid));
-
+            if (stateData.ExecutingNode == null)
+                throw new InvalidWorkflowStateException("Executing Node is null");
+                
             m_variables.Clear();
             m_variables = new Dictionary<string, object>(stateData.Variables ?? new Dictionary<string, object>());
 
-            EvaluateInputs(workflowNode);
-
-            IExecutable node = workflowNode as IExecutable;
-            if (node == null)
-                throw new InvalidWorkflowStateException("Node type is not invalid");
-
             State = ExecutionState.Resuming;
-            Execute(node);
+            Execute(stateData.ExecutingNode);
         }
 
         public void Attach(IDebugger debugger)
@@ -99,14 +93,14 @@ namespace StateMachines.Core
             m_debugger = debugger;
         }
 
-        public void SetBreakpoint(Guid nodeGuid)
+        public void SetBreakpoint(IExecutable executable)
         {
-            m_breakpoints.Add(nodeGuid);
+            m_breakpoints.Add(executable);
         }
 
-        public void RemoveBreakpoint(Guid nodeGuid)
+        public void RemoveBreakpoint(IExecutable executable)
         {
-            m_breakpoints.Remove(nodeGuid);
+            m_breakpoints.Remove(executable);
         }
 
         private void EvaluateInputs(WorkflowNode node)
@@ -146,16 +140,17 @@ namespace StateMachines.Core
             }
         }
 
-        private bool IsBreakpointHit(Guid guid)
+        private bool IsBreakpointHit(IExecutable executable)
         {
-            return m_breakpoints.Contains(guid);
+            return m_breakpoints.Contains(executable);
         }
 
         private static string MakeCacheKey(Pin pin)
         {
             if (pin == null)
                 throw new ArgumentNullException("pin");
-            return pin.Node.GetType() + "" + pin.Node.Guid.ToString() + "::" + pin.Name;
+
+            return pin.Node.Guid + "::" + pin.Name;
         }
 
         protected void Set(Pin pin, object value)
@@ -178,7 +173,7 @@ namespace StateMachines.Core
 
         private readonly Queue<WorkflowEventData> events = new Queue<WorkflowEventData>();
         private Dictionary<string, object> m_variables;
-        private readonly HashSet<Guid> m_breakpoints = new HashSet<Guid>();
+        private readonly HashSet<IExecutable> m_breakpoints = new HashSet<IExecutable>();
         private readonly IWorkflowGraph m_workflowGraph;
         private IDebugger m_debugger;
     }

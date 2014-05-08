@@ -61,14 +61,6 @@ namespace StateMachines.Core.Tests
             Assert.That(() => executionContext.Resume(data), Throws.TypeOf<InvalidWorkflowStateException>());
         }
 
-        [Test]
-        public void Test_Resume_ThrowsInvalidWorkflowStateException_IfNodeIsOfInvalidType()
-        {
-            var executionContext = m_workflowBuilder.Compile();
-            WorkflowStateData data = new WorkflowStateData();
-            data.ExecutingNodeGuid = m_concatFunction.Guid;
-            Assert.That(() => executionContext.Resume(data), Throws.TypeOf<InvalidWorkflowStateException>());
-        }
     }
 
     public class GetMessageFunction : WorkflowFunction

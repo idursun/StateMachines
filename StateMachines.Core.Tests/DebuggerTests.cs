@@ -39,7 +39,7 @@ namespace StateMachines.Core.Tests
             var executionContext = m_workflowBuilder.Compile();
 
             executionContext.Attach(m_debuggerMock.Object);
-            executionContext.SetBreakpoint(m_simpleNode2.Guid);
+            executionContext.SetBreakpoint(m_simpleNode2);
 
             executionContext.PublishEvent(new WorkflowEventData());
 
@@ -57,7 +57,7 @@ namespace StateMachines.Core.Tests
             });
 
             executionContext.Attach(m_debuggerMock.Object);
-            executionContext.SetBreakpoint(m_simpleNode2.Guid);
+            executionContext.SetBreakpoint(m_simpleNode2);
             executionContext.PublishEvent(new WorkflowEventData());
 
             Assert.IsFalse(m_simpleNode3.IsCalled);
@@ -73,8 +73,8 @@ namespace StateMachines.Core.Tests
             var executionContext = m_workflowBuilder.Compile();
 
             executionContext.Attach(m_debuggerMock.Object);
-            executionContext.SetBreakpoint(m_simpleNode2.Guid);
-            executionContext.RemoveBreakpoint(m_simpleNode2.Guid);
+            executionContext.SetBreakpoint(m_simpleNode2);
+            executionContext.RemoveBreakpoint(m_simpleNode2);
 
             executionContext.PublishEvent(new WorkflowEventData());
 

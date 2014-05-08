@@ -10,8 +10,8 @@ namespace StateMachines.Core
         void Run();
         void Resume(WorkflowStateData stateData);
         ExecutionState State { get; }
-        void SetBreakpoint(Guid nodeGuid);
-        void RemoveBreakpoint(Guid nodeGuid);
+        void SetBreakpoint(IExecutable executable);
+        void RemoveBreakpoint(IExecutable executable);
     }
 
     public enum ExecutionState
