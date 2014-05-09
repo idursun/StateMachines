@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContextVariable.cs" />
     <Compile Include="IDebugger.cs" />
     <Compile Include="IExecutable.cs" />
     <Compile Include="InitializeEventReceiver.cs" />

@@ -12,7 +12,7 @@ namespace StateMachines.Core
         protected internal WorkflowExecutionContext(IWorkflowGraph graph)
         {
             m_workflowGraph = graph;
-            m_variables = new Dictionary<string, object>();
+            m_variables = new Dictionary<ContextVariable, object>();
             m_debugger = new NullDebugger();
         }
 
@@ -82,7 +82,7 @@ namespace StateMachines.Core
                 throw new InvalidWorkflowStateException("Executing Node is null");
                 
             m_variables.Clear();
-            m_variables = new Dictionary<string, object>(stateData.Variables ?? new Dictionary<string, object>());
+            m_variables = new Dictionary<ContextVariable, object>(stateData.Variables ?? new Dictionary<ContextVariable, object>());
 
             State = ExecutionState.Resuming;
             Execute(stateData.ExecutingNode);
@@ -145,17 +145,21 @@ namespace StateMachines.Core
             return m_breakpoints.Contains(executable);
         }
 
-        private static string MakeCacheKey(Pin pin)
+        private static ContextVariable MakeContextVariable(Pin pin)
         {
             if (pin == null)
                 throw new ArgumentNullException("pin");
 
-            return pin.Node.Guid + "::" + pin.Name;
+            return new ContextVariable()
+            {
+                NodeGuid = pin.Node.Guid,
+                PinName = pin.Name
+            };
         }
 
         protected void Set(Pin pin, object value)
         {
-            string key = MakeCacheKey(pin);
+            ContextVariable key = MakeContextVariable(pin);
             m_variables[key] = value;
         }
 
@@ -163,7 +167,7 @@ namespace StateMachines.Core
         {
             if (pin == null) throw new ArgumentNullException("pin");
 
-            string key = MakeCacheKey(pin);
+            ContextVariable key = MakeContextVariable(pin);
             if (m_variables.ContainsKey(key))
             {
                 return m_variables[key];
@@ -172,8 +176,8 @@ namespace StateMachines.Core
         }
 
         private readonly Queue<WorkflowEventData> events = new Queue<WorkflowEventData>();
-        private Dictionary<string, object> m_variables;
         private readonly HashSet<IExecutable> m_breakpoints = new HashSet<IExecutable>();
+        private Dictionary<ContextVariable, object> m_variables;
         private readonly IWorkflowGraph m_workflowGraph;
         private IDebugger m_debugger;
     }
