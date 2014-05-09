@@ -1,4 +1,4 @@
-﻿namespace StateMachines.Core
+﻿namespace StateMachines.Core.Events
 {
     public class WorkflowEventData
     {

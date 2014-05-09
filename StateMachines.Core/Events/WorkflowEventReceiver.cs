@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StateMachines.Core
+namespace StateMachines.Core.Events
 {
     public abstract class WorkflowEventReceiver: WorkflowNode, IExecutable
     {

@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using StateMachines.Core.Events;
 
 namespace StateMachines.Core.Tests
 {

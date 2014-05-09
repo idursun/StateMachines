@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using StateMachines.Core.Events;
 
 namespace StateMachines.Core
 {

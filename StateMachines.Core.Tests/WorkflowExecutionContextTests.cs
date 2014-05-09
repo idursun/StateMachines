@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using StateMachines.Core.Events;
 using StateMachines.Core.Utils;
 
 namespace StateMachines.Core.Tests

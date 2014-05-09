@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using StateMachines.Core.Debugging;
+using StateMachines.Core.Events;
 using StateMachines.Core.Utils;
 
 namespace StateMachines.Core

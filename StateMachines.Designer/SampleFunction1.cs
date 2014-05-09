@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using StateMachines.Core;
+using StateMachines.Core.Events;
 
 namespace StateMachines.Designer
 {

@@ -62,14 +62,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContextVariable.cs" />
-    <Compile Include="IDebugger.cs" />
+    <Compile Include="Debugging\IDebugger.cs" />
     <Compile Include="IExecutable.cs" />
     <Compile Include="InitializeEventReceiver.cs" />
     <Compile Include="InvalidWorkflowStateException.cs" />
     <Compile Include="IWorkflowExecutionContext.cs" />
     <Compile Include="IWorkflowGraph.cs" />
     <Compile Include="Logic\BranchExecutionNode.cs" />
-    <Compile Include="NullDebugger.cs" />
+    <Compile Include="Debugging\NullDebugger.cs" />
     <Compile Include="WorkflowExecutionContext.cs" />
     <Compile Include="WorkflowExecutionNode.cs" />
     <Compile Include="WorkflowFunction.cs" />
@@ -80,8 +80,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorkflowBuilder.cs" />
     <Compile Include="Utils\ReflectionUtils.cs" />
-    <Compile Include="WorkflowEventData.cs" />
-    <Compile Include="WorkflowEventReceiver.cs" />
+    <Compile Include="Events\WorkflowEventData.cs" />
+    <Compile Include="Events\WorkflowEventReceiver.cs" />
     <Compile Include="WorkflowStateData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

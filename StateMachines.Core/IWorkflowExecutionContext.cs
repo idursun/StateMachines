@@ -1,4 +1,6 @@
 ﻿using System;
+using StateMachines.Core.Debugging;
+using StateMachines.Core.Events;
 
 namespace StateMachines.Core
 {

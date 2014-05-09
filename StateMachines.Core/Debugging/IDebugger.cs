@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace StateMachines.Core
+﻿namespace StateMachines.Core.Debugging
 {
     public interface IDebugger
     {

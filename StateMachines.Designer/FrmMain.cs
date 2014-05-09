@@ -8,6 +8,7 @@ using Graph;
 using Graph.Compatibility;
 using Graph.Items;
 using StateMachines.Core;
+using StateMachines.Core.Events;
 using StateMachines.Core.Utils;
 
 namespace StateMachines.Designer

@@ -1,5 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
+using StateMachines.Core.Debugging;
+using StateMachines.Core.Events;
 using StateMachines.Core.Utils;
 
 namespace StateMachines.Core.Tests
