@@ -44,11 +44,10 @@ namespace StateMachines.Core
             node.Execute(this);
         }
 
-        public void PublishEvent(WorkflowEventData workflowEventData)
+        public void PublishEvent<TEvent>(TEvent workflowEventData) 
+            where TEvent: WorkflowEventData
         {
             events.Enqueue(workflowEventData);
-
-            Run();
         }
 
         public void Run()

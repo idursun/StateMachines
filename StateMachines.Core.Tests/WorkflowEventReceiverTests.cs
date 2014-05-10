@@ -8,21 +8,21 @@ namespace StateMachines.Core.Tests
     public class WorkflowEventReceiverTests
     {
         [Test]
-        public void Test_Handles_Derived_Types()
+        public void Test_HandlesDerivedTypes()
         {
             var eventSink = new DataReceivedEventReceiver();
             Assert.That(eventSink.Handles(new DataReceivedEventData()), Is.True);
         }
 
         [Test]
-        public void Test_Handles_Null()
+        public void Test_HandlesNull()
         {
             var eventSink = new DataReceivedEventReceiver();
             Assert.That(eventSink.Handles(null), Is.False);
         }
 
         [Test]
-        public void Test_SetEventData_is_called()
+        public void Test_SetEventDataIsCalled()
         {
             WorkflowBuilder builder = new WorkflowBuilder();
             DataReceivedEventReceiver eventReceiver = new DataReceivedEventReceiver();
@@ -32,6 +32,7 @@ namespace StateMachines.Core.Tests
             var context = builder.Compile();
             
             context.PublishEvent(new DataReceivedEventData() { Data = "data"});
+            context.Run();
 
             Assert.That(eventReceiver.Data, Is.EqualTo("data"));
         }

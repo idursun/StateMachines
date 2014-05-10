@@ -16,7 +16,7 @@ namespace StateMachines.Core.Tests
         }
 
         [Test]
-        public void Test_Connect_Throws_If_Node_Is_Not_Added()
+        public void Test_Connect_ThrowsIfNodeIsNotAdded()
         {
             MakeMessageNode node = new MakeMessageNode();
             Assert.That(delegate
@@ -26,7 +26,7 @@ namespace StateMachines.Core.Tests
         }
 
         [Test]
-        public void Test_Add_Sets_Guid_If_Empty()
+        public void Test_Add_SetsGuidIfEmpty()
         {
             MakeMessageNode makeMessageNode = new MakeMessageNode();
             m_workflowBuilder.Add(makeMessageNode);
@@ -35,7 +35,7 @@ namespace StateMachines.Core.Tests
         }
 
         [Test]
-        public void Test_Add_Throws_If_Guid_Is_Already_Added()
+        public void Test_Add_ThrowsIfGuidIsAlreadyAdded()
         {
             MakeMessageNode makeMessageNode1 = new MakeMessageNode();
             MakeMessageNode makeMessageNode2 = new MakeMessageNode();

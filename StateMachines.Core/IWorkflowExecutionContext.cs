@@ -7,7 +7,7 @@ namespace StateMachines.Core
     public interface IWorkflowExecutionContext
     {
         void Execute(IExecutable node);
-        void PublishEvent(WorkflowEventData workflowEventData);
+        void PublishEvent<TEvent>(TEvent workflowEventData) where TEvent : WorkflowEventData;
         void Attach(IDebugger debugger);
         void Run();
         void Resume(WorkflowStateData stateData);

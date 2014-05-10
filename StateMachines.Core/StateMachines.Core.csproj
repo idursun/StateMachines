@@ -68,7 +68,7 @@
     <Compile Include="InvalidWorkflowStateException.cs" />
     <Compile Include="IWorkflowExecutionContext.cs" />
     <Compile Include="IWorkflowGraph.cs" />
-    <Compile Include="Logic\BranchExecutionNode.cs" />
+    <Compile Include="Nodes\Logic\BranchExecutionNode.cs" />
     <Compile Include="Debugging\NullDebugger.cs" />
     <Compile Include="WorkflowExecutionContext.cs" />
     <Compile Include="WorkflowExecutionNode.cs" />

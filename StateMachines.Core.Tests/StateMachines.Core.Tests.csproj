@@ -73,9 +73,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DebuggerTests.cs" />
+    <Compile Include="Debugging\DebuggerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Logic\BranchExecutionTests.cs" />
+    <Compile Include="Nodes\Logic\BranchExecutionTests.cs" />
     <Compile Include="WorkflowEventReceiverTests.cs" />
     <Compile Include="WorkflowExecutionContextTests.cs" />
     <Compile Include="WorkflowNodeTests.cs" />

@@ -1,14 +1,14 @@
 ﻿using Moq;
 using NUnit.Framework;
-using StateMachines.Core.Logic;
+using StateMachines.Core.Nodes.Logic;
 
-namespace StateMachines.Core.Tests.Logic
+namespace StateMachines.Core.Tests.Nodes.Logic
 {
     [TestFixture]
     public class BranchExecutionTests
     {
         [Test]
-        public void Test_Executes_True_Branch()
+        public void Test_ExecutesTrueBranch()
         {
             var contextMock = new Mock<IWorkflowExecutionContext>();
             var node = new BranchExecutionNode();
@@ -19,7 +19,7 @@ namespace StateMachines.Core.Tests.Logic
         }
         
         [Test]
-        public void Test_Executes_False_Branch()
+        public void Test_ExecutesFalseBranch()
         {
             var contextMock = new Mock<IWorkflowExecutionContext>();
             var node = new BranchExecutionNode();

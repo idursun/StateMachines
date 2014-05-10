@@ -42,6 +42,7 @@ namespace StateMachines.Core.Tests
         {
             var executionContext = m_workflowBuilder.Compile();
             executionContext.PublishEvent(WorkflowEventData.Empty);
+            executionContext.Run();
 
             Assert.That(m_executionNode.Output, Is.EqualTo("Hello World !!!"), "Message is not correct");
         }
@@ -55,7 +56,7 @@ namespace StateMachines.Core.Tests
         }
 
         [Test]
-        public void Test_Resume_ThrowsInvalidWorkflowStateException_IfNodeIsNotFound()
+        public void Test_Resume_ThrowsInvalidWorkflowStateExceptionIfNodeIsNotFound()
         {
             var executionContext = m_workflowBuilder.Compile();
             WorkflowStateData data = new WorkflowStateData();

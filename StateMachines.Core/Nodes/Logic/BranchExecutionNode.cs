@@ -1,4 +1,4 @@
-﻿namespace StateMachines.Core.Logic
+﻿namespace StateMachines.Core.Nodes.Logic
 {
     public class BranchExecutionNode : WorkflowExecutionNode
     {

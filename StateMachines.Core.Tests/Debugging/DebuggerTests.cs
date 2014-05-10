@@ -4,7 +4,7 @@ using StateMachines.Core.Debugging;
 using StateMachines.Core.Events;
 using StateMachines.Core.Utils;
 
-namespace StateMachines.Core.Tests
+namespace StateMachines.Core.Tests.Debugging
 {
     [TestFixture]
     public class DebuggerTests
@@ -44,6 +44,7 @@ namespace StateMachines.Core.Tests
             executionContext.SetBreakpoint(m_simpleNode2);
 
             executionContext.PublishEvent(new WorkflowEventData());
+            executionContext.Run();
 
             m_debuggerMock.Verify(x => x.Break(It.IsAny<WorkflowStateData>()));
         }
@@ -61,6 +62,7 @@ namespace StateMachines.Core.Tests
             executionContext.Attach(m_debuggerMock.Object);
             executionContext.SetBreakpoint(m_simpleNode2);
             executionContext.PublishEvent(new WorkflowEventData());
+            executionContext.Run();
 
             Assert.IsFalse(m_simpleNode3.IsCalled);
 
@@ -70,7 +72,7 @@ namespace StateMachines.Core.Tests
         } 
         
         [Test]
-        public void Test_RemoveBreakpoint_Removes()
+        public void Test_Remove_BreakpointRemoves()
         {
             var executionContext = m_workflowBuilder.Compile();
 

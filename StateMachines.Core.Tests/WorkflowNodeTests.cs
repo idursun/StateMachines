@@ -8,7 +8,7 @@ namespace StateMachines.Core.Tests
     public class WorkflowNodeTests
     {
          [Test]
-         public void Test_Pin_Returns_not_Null()
+         public void Test_Pin_ReturnsNotNull()
          {
              SampleNode sampleNode = new SampleNode();
              Pin pin = sampleNode.Pin(x => x.Output1);
@@ -17,7 +17,7 @@ namespace StateMachines.Core.Tests
          }
         
         [Test]
-         public void Test_Pin_ByName_Returns_not_Null()
+         public void Test_Pin_ByNameReturnsNotNull()
          {
              SampleNode sampleNode = new SampleNode();
              Pin pin = sampleNode.Pin("Output1");
@@ -26,7 +26,7 @@ namespace StateMachines.Core.Tests
          }
 
         [Test]
-         public void Test_Pin_ByName_From_BaseType_Returns_not_Null_()
+         public void Test_Pin_ByName_From_BaseTypeReturnsNotNull_()
          {
              WorkflowNode sampleNode = new SampleNode();
              Pin pin = sampleNode.Pin("Output1");
@@ -35,7 +35,7 @@ namespace StateMachines.Core.Tests
          }
         
          [Test]
-         public void Test_Pin_Throws_If_expression_is_not_a_property()
+         public void Test_Pin_Throws_IfExpressionIsNotAProperty()
          {
              SampleNode sampleNode = new SampleNode();
              Assert.That(delegate
@@ -45,7 +45,7 @@ namespace StateMachines.Core.Tests
          }
 
         [Test]
-        public void Test_GetPins_Returns_only_inputs()
+        public void Test_GetPins_ReturnsOnlyInputs()
         {
             SampleNode sampleNode = new SampleNode();
             var inputs = sampleNode.GetPins(PinType.Input);
@@ -55,7 +55,7 @@ namespace StateMachines.Core.Tests
         } 
         
         [Test]
-        public void Test_GetPins_Returns_only_outputs()
+        public void Test_GetPins_ReturnsOnlyOutputs()
         {
             SampleNode sampleNode = new SampleNode();
             var inputs = sampleNode.GetPins(PinType.Output);
@@ -65,7 +65,7 @@ namespace StateMachines.Core.Tests
         } 
 
         [Test]
-        public void Test_GetPins_Returns_only_execute()
+        public void Test_GetPins_ReturnsOnlyExecute()
         {
             SampleNode sampleNode = new SampleNode();
             var inputs = sampleNode.GetPins(PinType.Execute);
@@ -75,7 +75,7 @@ namespace StateMachines.Core.Tests
         } 
         
         [Test]
-        public void Test_GetPins_Throws_If_pintype_is_none()
+        public void Test_GetPins_ThrowsIfPintypeIsNone()
         {
             SampleNode sampleNode = new SampleNode();
             Assert.That(delegate
