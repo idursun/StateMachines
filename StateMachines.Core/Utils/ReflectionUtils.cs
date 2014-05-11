@@ -53,17 +53,21 @@ namespace StateMachines.Core.Utils
             }
         }
 
-        public static Pin Pin<T>(this T node, Expression<Func<T, object>> expr)
+        public static Pin Pin<T,R>(this T node, Expression<Func<T, R>> expr)
             where T: WorkflowNode
         {
+
             if (expr.NodeType != ExpressionType.Lambda)
                 throw new Exception("Has to be lambda.");
 
-            MemberExpression member = (expr.Body as MemberExpression);
-            if (member == null)
+            string propertyName;
+            MemberExpression body = expr.Body as MemberExpression;
+            if (body != null)
+            {
+                propertyName = body.Member.Name;
+            }
+            else
                 throw new Exception("has to be a property expression");
-
-            var propertyName = member.Member.Name;
 
             return Pin(node, propertyName);
         }
