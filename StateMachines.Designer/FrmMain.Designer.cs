@@ -64,6 +64,7 @@
             this.graphControl1.SmallStepGridColor = System.Drawing.Color.Gray;
             this.graphControl1.TabIndex = 0;
             this.graphControl1.Text = "graphControl1";
+            this.graphControl1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.graphControl1_KeyUp);
             // 
             // splitContainer1
             // 
@@ -119,7 +120,7 @@
             this.m_btnCompile});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(115, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(84, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // m_btnCompile

@@ -38,6 +38,7 @@ namespace Graph
 
 	public partial class GraphControl : Control
 	{
+        private readonly IGraphRenderer m_renderer = new GraphRenderer();
 		#region Constructor
 		public GraphControl()
 		{
@@ -825,7 +826,7 @@ namespace Graph
 			}
 			foreach (var connection in foundConnections)
 			{
-				using (var region = GraphRenderer.GetConnectionRegion(connection))
+				using (var region = m_renderer.GetConnectionRegion(connection))
 				{
 					if (region.IsVisible(location))
 						return connection;
@@ -881,7 +882,7 @@ namespace Graph
 			}
 			foreach (var connection in foundConnections)
 			{
-				using (var region = GraphRenderer.GetConnectionRegion(connection))
+				using (var region = m_renderer.GetConnectionRegion(connection))
 				{
 					if (region.IsVisible(location) && acceptElement(connection))
 						return connection;
@@ -957,8 +958,8 @@ namespace Graph
 				e.Graphics.DrawRectangle(Pens.DarkGray, marque_rectangle.X, marque_rectangle.Y, marque_rectangle.Width, marque_rectangle.Height);
 			}
 
-			GraphRenderer.PerformLayout(e.Graphics, graphNodes);
-			GraphRenderer.Render(e.Graphics, graphNodes, ShowLabels);
+			m_renderer.PerformLayout(e.Graphics, graphNodes);
+			m_renderer.Render(e.Graphics, graphNodes, ShowLabels);
 			
 			if (command == CommandMode.Edit)
 			{
@@ -972,13 +973,13 @@ namespace Graph
 							case ElementType.OutputConnector:
 								var outputConnector = DragElement as NodeConnector;
 								renderState |= (outputConnector.state & (RenderState.Incompatible | RenderState.Compatible));
-								GraphRenderer.RenderOutputConnection(e.Graphics, outputConnector, 
+                                m_renderer.RenderOutputConnection(e.Graphics, outputConnector, 
 									transformed_location.X, transformed_location.Y, renderState);
 								break;
 							case ElementType.InputConnector:
 								var inputConnector = DragElement as NodeConnector;
 								renderState |= (inputConnector.state & (RenderState.Incompatible | RenderState.Compatible));
-								GraphRenderer.RenderInputConnection(e.Graphics, inputConnector, 
+                                m_renderer.RenderInputConnection(e.Graphics, inputConnector, 
 									transformed_location.X, transformed_location.Y, renderState);
 								break;
 						}
@@ -1571,7 +1572,7 @@ namespace Graph
 					SetFlag(internalDragOverElement, RenderState.DraggedOver, false);
 					var node = GetElementNode(internalDragOverElement);
 					if (node != null)
-						GraphRenderer.PerformLayout(this.CreateGraphics(), node);
+                        m_renderer.PerformLayout(this.CreateGraphics(), node);
 					needRedraw = true;
 				}
 
@@ -1582,7 +1583,7 @@ namespace Graph
 					SetFlag(internalDragOverElement, RenderState.DraggedOver, true);
 					var node = GetElementNode(internalDragOverElement);
 					if (node != null)
-						GraphRenderer.PerformLayout(this.CreateGraphics(), node);
+                        m_renderer.PerformLayout(this.CreateGraphics(), node);
 					needRedraw = true;
 				}
 			}

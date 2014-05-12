@@ -54,7 +54,10 @@ namespace StateMachines.Designer
 
         private void CreateTypeNodes()
         {
-            Type[] types = Assembly.GetExecutingAssembly().GetTypes();
+            List<Type> types = new List<Type>();
+            types.AddRange(Assembly.GetExecutingAssembly().GetTypes());
+            types.AddRange(typeof (WorkflowNode).Assembly.GetTypes().Where(x => x.Namespace.Contains("Nodes."))); // sadece nodes altindakileri alsin simdilik.
+
             var nodeType = types.Where(x => typeof(WorkflowNode).IsAssignableFrom(x)).ToList();
             foreach (var type in nodeType)
             {
@@ -144,10 +147,20 @@ namespace StateMachines.Designer
             {
                 var executionContext = graphControl1.Compile();
                 executionContext.PublishEvent(WorkflowEventData.Empty);
+                executionContext.Run();
             }
             catch (Exception exception)
             {
                 MessageBox.Show("Error:" + exception.Message);
+            }
+        }
+
+        private void graphControl1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                IEnumerable<Node> nodes = graphControl1.Nodes.Where(x => x.ElementType == ElementType.NodeSelection);
+                graphControl1.RemoveNodes(nodes);
             }
         }
     }

@@ -29,9 +29,9 @@ using System.Drawing.Drawing2D;
 
 namespace Graph
 {
-	public static class GraphRenderer
+	public class GraphRenderer : IGraphRenderer
 	{
-		static IEnumerable<NodeItem> EnumerateNodeItems(Node node)
+	    static IEnumerable<NodeItem> EnumerateNodeItems(Node node)
 		{
 			if (node == null)
 				yield break;
@@ -42,7 +42,7 @@ namespace Graph
 				yield return item;
 		}
 
-		public static SizeF Measure(Graphics context, Node node)
+	    private SizeF Measure(Graphics context, Node node)
 		{
 			if (node == null)
 				return SizeF.Empty;
@@ -172,28 +172,28 @@ namespace Graph
 			}
 		}
 
-		public static void PerformLayout(Graphics graphics, IEnumerable<Node> nodes)
+		public void PerformLayout(Graphics graphics, IEnumerable<Node> nodes)
 		{
 			foreach (var node in nodes.Reverse<Node>())
 			{
-				GraphRenderer.PerformLayout(graphics, node);
+				PerformLayout(graphics, node);
 			}
 		}
 
-		public static void Render(Graphics graphics, IEnumerable<Node> nodes, bool showLabels)
+		public void Render(Graphics graphics, IEnumerable<Node> nodes, bool showLabels)
 		{
 			var skipConnections = new HashSet<NodeConnection>();
 			foreach (var node in nodes.Reverse<Node>())
 			{
-				GraphRenderer.RenderConnections(graphics, node, skipConnections, showLabels);
+				RenderConnections(graphics, node, skipConnections, showLabels);
 			}
 			foreach (var node in nodes.Reverse<Node>())
 			{
-				GraphRenderer.Render(graphics, node);
+				Render(graphics, node);
 			}
 		}
 
-		public static void PerformLayout(Graphics graphics, Node node)
+		public void PerformLayout(Graphics graphics, Node node)
 		{
 		    if (node == null)
 		        return;
@@ -260,7 +260,7 @@ namespace Graph
 		    node.itemsBounds = new RectangleF(left, top, right - left, bottom - top);
 		}
 
-	    static void Render(Graphics graphics, Node node)
+	    void Render(Graphics graphics, Node node)
 	    {
 	        var size = node.bounds.Size;
 	        var position = node.bounds.Location;
@@ -363,7 +363,7 @@ namespace Graph
 	        }
 	    }
 
-	    public static void RenderConnections(Graphics graphics, Node node, HashSet<NodeConnection> skipConnections, bool showLabels)
+	    public void RenderConnections(Graphics graphics, Node node, HashSet<NodeConnection> skipConnections, bool showLabels)
 		{
 			foreach (var connection in node.connections.Reverse<NodeConnection>())
 			{
@@ -453,7 +453,7 @@ namespace Graph
 			}
 		}
 
-		public static Region GetConnectionRegion(NodeConnection connection)
+		public Region GetConnectionRegion(NodeConnection connection)
 		{
 			var to		= connection.To;
 			var from	= connection.From;
@@ -648,7 +648,7 @@ namespace Graph
 			return path;
 		}
 
-		public static void RenderOutputConnection(Graphics graphics, NodeConnector output, float x, float y, RenderState state)
+		public void RenderOutputConnection(Graphics graphics, NodeConnector output, float x, float y, RenderState state)
 		{
 			if (graphics == null ||
 				output == null)
@@ -670,7 +670,7 @@ namespace Graph
 			}
 		}
 		
-		public static void RenderInputConnection(Graphics graphics, NodeConnector input, float x, float y, RenderState state)
+		public void RenderInputConnection(Graphics graphics, NodeConnector input, float x, float y, RenderState state)
 		{
 			if (graphics == null || 
 				input == null)
