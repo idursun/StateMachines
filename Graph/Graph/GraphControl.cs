@@ -959,7 +959,7 @@ namespace Graph
 			}
 
 			m_renderer.PerformLayout(e.Graphics, graphNodes);
-			m_renderer.Render(e.Graphics, graphNodes, ShowLabels);
+			RenderNodes(e.Graphics, graphNodes, ShowLabels);
 			
 			if (command == CommandMode.Edit)
 			{
@@ -988,6 +988,62 @@ namespace Graph
 			}
 		}
 		#endregion
+
+	    protected virtual void RenderNodes(Graphics graphics, IEnumerable<Node> nodes, bool showLabels)
+        {
+            var skipConnections = new HashSet<NodeConnection>();
+            foreach (var node in nodes.Reverse<Node>())
+            {
+                RenderConnections(graphics, node, skipConnections, showLabels);
+            }
+            foreach (var node in nodes.Reverse<Node>())
+            {
+                m_renderer.RenderNode(graphics, node);
+            }
+        }
+
+	    protected virtual void RenderConnections(Graphics graphics, Node node, HashSet<NodeConnection> skipConnections, bool showLabels)
+        {
+            foreach (var connection in node.connections.Reverse<NodeConnection>())
+            {
+                if (connection == null ||
+                    connection.From == null ||
+                    connection.To == null)
+                    continue;
+
+                if (skipConnections.Add(connection))
+                {
+                    var to = connection.To;
+                    var from = connection.From;
+                    RectangleF toBounds = to.bounds;
+                    RectangleF fromBounds = @from.bounds;
+
+                    var x1 = (fromBounds.Left + fromBounds.Right) / 2.0f;
+                    var y1 = (fromBounds.Top + fromBounds.Bottom) / 2.0f;
+                    var x2 = (toBounds.Left + toBounds.Right) / 2.0f;
+                    var y2 = (toBounds.Top + toBounds.Bottom) / 2.0f;
+
+                    float centerX;
+                    float centerY;
+                    using (var path = GraphUtils.GetArrowLinePath(x1, y1, x2, y2, out centerX, out centerY, false))
+                    {
+                        using (var brush = new SolidBrush(m_renderer.GetArrowLineColor(connection.state | RenderState.Connected)))
+                        {
+                            graphics.DrawPath(new Pen(brush, 4), path);
+                            //graphics.FillPath(brush, path);
+                        }
+                        connection.bounds = path.GetBounds();
+                    }
+
+                    if (showLabels &&
+                        !string.IsNullOrWhiteSpace(connection.Name))
+                    {
+                        var center = new PointF(centerX, centerY);
+                        m_renderer.RenderLabel(graphics, connection, center, connection.state);
+                    }
+                }
+            }
+        }
 
 		#region OnDrawBackground
 		virtual protected void OnDrawBackground(PaintEventArgs e)

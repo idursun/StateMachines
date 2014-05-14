@@ -177,7 +177,7 @@ namespace Graph.Items
 
 			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, textRect, GraphConstants.LeftTextStringFormat);
 
-			using (var path = GraphRenderer.CreateRoundedRectangle(sliderRect.Size, sliderRect.Location))
+			using (var path = GraphUtils.CreateRoundedRectangle(sliderRect.Size, sliderRect.Location))
 			{
 				if ((state & (RenderState.Hover | RenderState.Dragging)) != 0)
 					graphics.DrawPath(Pens.White, path);

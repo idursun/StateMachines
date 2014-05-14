@@ -75,7 +75,8 @@ static internal class GraphUtils
 			}
 			//*/
 			
-        var points = new List<PointF> { 
+        var points = new List<PointF>
+        { 
             new PointF(x1, y1),
             new PointF(xA, y1),
             new PointF(xB, y2),
@@ -172,5 +173,34 @@ static internal class GraphUtils
         }
 
         return newPoints;
+    }
+
+    public static PointF[] GetArrowPoints(float x, float y, float extra_thickness = 0)
+    {
+        return new PointF[]{
+            new PointF(x - (GraphConstants.ConnectorSize + 1.0f) - extra_thickness, y + (GraphConstants.ConnectorSize / 1.5f) + extra_thickness),
+            new PointF(x + 1.0f + extra_thickness, y),
+            new PointF(x - (GraphConstants.ConnectorSize + 1.0f) - extra_thickness, y - (GraphConstants.ConnectorSize / 1.5f) - extra_thickness)};
+    }
+
+    public static GraphicsPath CreateRoundedRectangle(SizeF size, PointF location)
+    {
+        int cornerSize			= (int)GraphConstants.CornerSize * 2;
+
+        var height				= size.Height;
+        var width				= size.Width;
+        var left				= location.X;
+        var top					= location.Y;
+        var right				= location.X + width;
+        var bottom				= location.Y + height;
+
+        var path = new GraphicsPath(FillMode.Winding);
+        path.AddArc(left, top, cornerSize, cornerSize, 180, 90);
+        path.AddArc(right - cornerSize, top, cornerSize, cornerSize, 270, 90);
+
+        path.AddArc(right - cornerSize, bottom - cornerSize, cornerSize, cornerSize, 0, 90);
+        path.AddArc(left, bottom - cornerSize, cornerSize, cornerSize, 90, 90);
+        path.CloseFigure();
+        return path;
     }
 }

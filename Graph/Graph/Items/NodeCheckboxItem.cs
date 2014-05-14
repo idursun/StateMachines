@@ -106,7 +106,7 @@ namespace Graph.Items
 			size.Width  = Math.Max(minimumSize.Width, size.Width);
 			size.Height = Math.Max(minimumSize.Height, size.Height);
 			
-			using (var path = GraphRenderer.CreateRoundedRectangle(size, location))
+			using (var path = GraphUtils.CreateRoundedRectangle(size, location))
 			{
 				var rect = new RectangleF(location, size);
 				if (this.Checked)

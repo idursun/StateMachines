@@ -157,7 +157,7 @@ namespace Graph
 			var y = (bounds.Top + bounds.Bottom) / 2.0f;
 			using (var brush = new SolidBrush(GetArrowLineColor(connectionState | RenderState.Connected)))
 			{
-				graphics.FillPolygon(brush, GetArrowPoints(x,y), FillMode.Winding);
+				graphics.FillPolygon(brush, GraphUtils.GetArrowPoints(x,y), FillMode.Winding);
 			}
 		}
 
@@ -169,18 +169,6 @@ namespace Graph
 			}
 		}
 
-		public void Render(Graphics graphics, IEnumerable<Node> nodes, bool showLabels)
-		{
-			var skipConnections = new HashSet<NodeConnection>();
-			foreach (var node in nodes.Reverse<Node>())
-			{
-				RenderConnections(graphics, node, skipConnections, showLabels);
-			}
-			foreach (var node in nodes.Reverse<Node>())
-			{
-				Render(graphics, node);
-			}
-		}
 
 		public void PerformLayout(Graphics graphics, Node node)
 		{
@@ -249,7 +237,7 @@ namespace Graph
 		    node.itemsBounds = new RectangleF(left, top, right - left, bottom - top);
 		}
 
-	    void Render(Graphics graphics, Node node)
+	    public void RenderNode(Graphics graphics, Node node)
 	    {
 	        var size = node.bounds.Size;
 	        var position = node.bounds.Location;
@@ -352,48 +340,6 @@ namespace Graph
 	        }
 	    }
 
-	    public void RenderConnections(Graphics graphics, Node node, HashSet<NodeConnection> skipConnections, bool showLabels)
-		{
-			foreach (var connection in node.connections.Reverse<NodeConnection>())
-			{
-				if (connection == null ||
-					connection.From == null ||
-					connection.To == null)
-					continue;
-
-				if (skipConnections.Add(connection))
-				{
-					var to		= connection.To;
-					var from	= connection.From;
-				    RectangleF toBounds = to.bounds;
-					RectangleF fromBounds = @from.bounds;
-
-					var x1 = (fromBounds.Left + fromBounds.Right) / 2.0f;
-					var y1 = (fromBounds.Top + fromBounds.Bottom) / 2.0f;
-					var x2 = (toBounds.Left + toBounds.Right) / 2.0f;
-					var y2 = (toBounds.Top + toBounds.Bottom) / 2.0f;
-
-					float centerX;
-					float centerY;
-					using (var path = GraphUtils.GetArrowLinePath(x1, y1, x2, y2, out centerX, out centerY, false))
-					{
-						using (var brush = new SolidBrush(GetArrowLineColor(connection.state | RenderState.Connected)))
-						{
-							graphics.DrawPath(new Pen(brush, 4), path);
-                            //graphics.FillPath(brush, path);
-						}
-						connection.bounds = path.GetBounds();
-					}
-
-					if (showLabels &&
-						!string.IsNullOrWhiteSpace(connection.Name))
-					{
-						var center = new PointF(centerX, centerY);
-						RenderLabel(graphics, connection, center, connection.state);
-					}
-				}
-			}
-		}
 
 	    public void RenderLabel(Graphics graphics, NodeConnection connection, PointF center, RenderState state)
 		{
@@ -442,14 +388,6 @@ namespace Graph
 			}
 		}
 
-	    static PointF[] GetArrowPoints(float x, float y, float extra_thickness = 0)
-		{
-			return new PointF[]{
-					new PointF(x - (GraphConstants.ConnectorSize + 1.0f) - extra_thickness, y + (GraphConstants.ConnectorSize / 1.5f) + extra_thickness),
-					new PointF(x + 1.0f + extra_thickness, y),
-					new PointF(x - (GraphConstants.ConnectorSize + 1.0f) - extra_thickness, y - (GraphConstants.ConnectorSize / 1.5f) - extra_thickness)};
-		}
-
 	    public void RenderOutputConnection(Graphics graphics, NodeConnector output, float x, float y, RenderState state)
 		{
 			if (graphics == null ||
@@ -494,29 +432,8 @@ namespace Graph
 			}
 		}
 
-		public static GraphicsPath CreateRoundedRectangle(SizeF size, PointF location)
-		{
-			int cornerSize			= (int)GraphConstants.CornerSize * 2;
 
-			var height				= size.Height;
-			var width				= size.Width;
-			var left				= location.X;
-			var top					= location.Y;
-			var right				= location.X + width;
-			var bottom				= location.Y + height;
-
-			var path = new GraphicsPath(FillMode.Winding);
-			path.AddArc(left, top, cornerSize, cornerSize, 180, 90);
-			path.AddArc(right - cornerSize, top, cornerSize, cornerSize, 270, 90);
-
-			path.AddArc(right - cornerSize, bottom - cornerSize, cornerSize, cornerSize, 0, 90);
-			path.AddArc(left, bottom - cornerSize, cornerSize, cornerSize, 90, 90);
-			path.CloseFigure();
-			return path;
-		}
-
-
-        public Color GetArrowLineColor(RenderState state)
+	    public Color GetArrowLineColor(RenderState state)
         {
             if ((state & (RenderState.Hover | RenderState.Dragging)) != 0)
             {

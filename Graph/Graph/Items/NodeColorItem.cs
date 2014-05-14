@@ -141,7 +141,7 @@ namespace Graph.Items
 
 			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, rect, format);
 
-			using (var path = GraphRenderer.CreateRoundedRectangle(colorBox.Size, colorBox.Location))
+			using (var path = GraphUtils.CreateRoundedRectangle(colorBox.Size, colorBox.Location))
 			{
 				using (var brush = new SolidBrush(this.Color))
 				{

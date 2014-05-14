@@ -138,7 +138,7 @@ namespace Graph.Items
 			size.Width  = Math.Max(minimumSize.Width, size.Width);
 			size.Height = Math.Max(minimumSize.Height, size.Height);
 
-			var path = GraphRenderer.CreateRoundedRectangle(size, location);
+			var path = GraphUtils.CreateRoundedRectangle(size, location);
 
 			location.Y += 1;
 			location.X += 1;

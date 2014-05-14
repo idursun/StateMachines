@@ -44,7 +44,7 @@ namespace Graph.Items
 		public NodeNumericSliderItem( string text, float sliderSize, float textSize, float minValue, float maxValue, float defaultValue, bool inputEnabled, bool outputEnabled ) : base( text, sliderSize, textSize, minValue, maxValue, defaultValue, inputEnabled, outputEnabled ) {}
 
 		/// <summary>
-		/// Render the slider.
+		/// RenderNode the slider.
 		/// </summary>
 		/// <param name="graphics">The <see cref="Graphics"/> instance that should be used for drawing.</param>
 		/// <param name="minimumSize">The smallest size the slider has to fit into.</param>
