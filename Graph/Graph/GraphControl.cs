@@ -826,7 +826,7 @@ namespace Graph
 			}
 			foreach (var connection in foundConnections)
 			{
-				using (var region = m_renderer.GetConnectionRegion(connection))
+				using (var region = GraphUtils.GetConnectionRegion(connection))
 				{
 					if (region.IsVisible(location))
 						return connection;
@@ -882,7 +882,7 @@ namespace Graph
 			}
 			foreach (var connection in foundConnections)
 			{
-				using (var region = m_renderer.GetConnectionRegion(connection))
+				using (var region = GraphUtils.GetConnectionRegion(connection))
 				{
 					if (region.IsVisible(location) && acceptElement(connection))
 						return connection;
