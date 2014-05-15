@@ -929,10 +929,6 @@ namespace Graph
 		{
 			base.OnPaint(e);
 
-			if (e.Graphics == null)
-				return;
-			
-
 			e.Graphics.PageUnit				= GraphicsUnit.Pixel;
 			e.Graphics.CompositingQuality	= CompositingQuality.GammaCorrected;
 			e.Graphics.TextRenderingHint	= TextRenderingHint.ClearTypeGridFit;
@@ -949,7 +945,6 @@ namespace Graph
 			if (this.graphNodes.Count == 0)
 				return;
 
-			
 			var transformed_location = GetTransformedLocation();
 			if (command == CommandMode.MarqueSelection)
 			{

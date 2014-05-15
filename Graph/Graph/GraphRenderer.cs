@@ -50,20 +50,6 @@ namespace Graph
 			return size;
 		}
 
-		static SizeF PreRenderItem(Graphics graphics, NodeItem item, PointF position)
-		{
-			var itemSize = (SizeF)item.Measure(graphics);
-			item.bounds = new RectangleF(position, itemSize);
-			return itemSize;
-		}
-
-		static void RenderItem(Graphics graphics, SizeF minimumSize, NodeItem item, PointF position)
-		{
-			item.Render(graphics, minimumSize, position);
-		}
-
-		private static Pen BorderPen = new Pen(Color.FromArgb(64, 64, 64));
-
 		public void RenderConnector(Graphics graphics, NodeConnector nodeConnector, RenderState renderState)
 		{
             if (nodeConnector.ConnectorType == NodeConnectorType.Exec)
@@ -110,7 +96,6 @@ namespace Graph
                         graphics.DrawArc(pen, bounds, 270, 180);
                     }
                 }			
-
         }
 
         private void RenderExecConnector(Graphics graphics, NodeConnector nodeConnector, RenderState renderState)
@@ -163,12 +148,11 @@ namespace Graph
 
 		public void PerformLayout(Graphics graphics, IEnumerable<Node> nodes)
 		{
-			foreach (var node in nodes.Reverse<Node>())
+			foreach (var node in nodes.Reverse())
 			{
 				PerformLayout(graphics, node);
 			}
 		}
-
 
 		public void PerformLayout(Graphics graphics, Node node)
 		{
@@ -178,8 +162,7 @@ namespace Graph
 		    var position = node.Location;
 		    node.bounds = new RectangleF(position, size);
 
-		    var path = new GraphicsPath(FillMode.Winding);
-		    int connectorSize = (int) GraphConstants.ConnectorSize;
+		    const int connectorSize = GraphConstants.ConnectorSize;
 		    int halfConnectorSize = (int) Math.Ceiling(connectorSize/2.0f);
 		    var connectorOffset = (int) Math.Floor((GraphConstants.MinimumItemHeight - GraphConstants.ConnectorSize)/2.0f);
 		    var left = position.X + halfConnectorSize;
@@ -192,13 +175,15 @@ namespace Graph
 		    //node.connections.Clear();
 
 		    var itemPosition = position;
-		    itemPosition.X += connectorSize + (int) GraphConstants.HorizontalSpacing;
+		    itemPosition.X += connectorSize + GraphConstants.HorizontalSpacing;
 		    node.inputBounds = Rectangle.Empty;
 		    node.outputBounds = Rectangle.Empty;
 
 		    foreach (var item in GraphUtils.EnumerateNodeItems(node))
 		    {
-		        var itemSize = PreRenderItem(graphics, item, itemPosition);
+                var itemSize = item.Measure(graphics);
+                item.bounds = new RectangleF(position, itemSize);
+
 		        var realHeight = itemSize.Height;
 		        var inputConnector = item.Input;
 		        if (inputConnector != null && inputConnector.Enabled)
@@ -242,10 +227,9 @@ namespace Graph
 	        var size = node.bounds.Size;
 	        var position = node.bounds.Location;
 
-	        int cornerSize = (int) GraphConstants.CornerSize*2;
-	        int connectorSize = (int) GraphConstants.ConnectorSize;
+	        const int cornerSize = GraphConstants.CornerSize*2;
+	        const int connectorSize = GraphConstants.ConnectorSize;
 	        int halfConnectorSize = (int) Math.Ceiling(connectorSize/2.0f);
-	        var connectorOffset = (int) Math.Floor((GraphConstants.MinimumItemHeight - GraphConstants.ConnectorSize)/2.0f);
 	        var left = position.X + halfConnectorSize;
 	        var top = position.Y;
 	        var right = position.X + size.Width - halfConnectorSize;
@@ -259,38 +243,23 @@ namespace Graph
 	            path.AddArc(left, bottom - cornerSize, cornerSize, cornerSize, 90, 90);
 	            path.CloseFigure();
 
-	            //if ((node.state & (RenderState.Dragging | RenderState.Focus)) != 0)
-	            //{
-	            //    graphics.FillPath(Brushes.DarkOrange, path);
-	            //} else
-	            //if ((node.state & RenderState.Hover) != 0)
-	            //{
-	            //    graphics.FillPath(Brushes.LightSteelBlue, path);
-	            //} else
-
 	            using (SolidBrush brush = new SolidBrush(node.BackColor))
 	            {
 	                graphics.FillPath(brush, path);
 	            }
 
-                if ((node.state & RenderState.Hover) == RenderState.Hover)
+                Color borderColor = Color.FromArgb(64, 64, 64);
+                if (node.state.HasFlag(RenderState.Focus) && node.state.HasFlag(RenderState.Dragging))
+	                borderColor = Color.Yellow;
+	            else if ((node.state & RenderState.Hover) == RenderState.Hover)
+	                borderColor = Color.Orange;
+
+	            using (Pen pen = new Pen(borderColor, 2))
                 {
-                    using (Pen pen = new Pen(Color.Orange, 2))
-                    {
-                        graphics.DrawPath(pen, path);    
-                    }
-                }
-                else
-                {
-                    graphics.DrawPath(BorderPen, path);
+                    graphics.DrawPath(pen, path);
                 }
 	        }
-	        /*
-			if (!node.Collapsed)
-				graphics.DrawLine(Pens.Black, 
-					left  + GraphConstants.ConnectorSize, node.titleItem.bounds.Bottom - GraphConstants.ItemSpacing, 
-					right - GraphConstants.ConnectorSize, node.titleItem.bounds.Bottom - GraphConstants.ItemSpacing);
-			*/
+	     
 	        var itemPosition = position;
 	        itemPosition.X += connectorSize + (int) GraphConstants.HorizontalSpacing;
 	        node.inputBounds = Rectangle.Empty;
@@ -299,7 +268,7 @@ namespace Graph
 	        var minimumItemSize = new SizeF(node.bounds.Width - GraphConstants.NodeExtraWidth, 0);
 	        foreach (var item in GraphUtils.EnumerateNodeItems(node))
 	        {
-	            RenderItem(graphics, minimumItemSize, item, itemPosition);
+                item.Render(graphics, minimumItemSize, position);
 	            var inputConnector = item.Input;
 	            if (inputConnector != null && inputConnector.Enabled)
 	            {
@@ -345,8 +314,8 @@ namespace Graph
 		{
 			using (var path = new GraphicsPath(FillMode.Winding))
 			{			
-				int cornerSize			= (int)GraphConstants.CornerSize * 2;
-				int connectorSize		= (int)GraphConstants.ConnectorSize;
+				const int cornerSize = GraphConstants.CornerSize * 2;
+				const int connectorSize = GraphConstants.ConnectorSize;
 				int halfConnectorSize	= (int)Math.Ceiling(connectorSize / 2.0f);
 
 				SizeF size;
