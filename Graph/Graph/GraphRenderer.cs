@@ -31,24 +31,6 @@ namespace Graph
 {
 	public class GraphRenderer : IGraphRenderer
 	{
-	    public SizeF Measure(Graphics context, Node node)
-		{
-			if (node == null)
-				return SizeF.Empty;
-
-			SizeF size = Size.Empty;
-			size.Height = //(int)NodeConstants.TopHeight + 
-				(int)GraphConstants.BottomHeight;
-			foreach (var item in GraphUtils.EnumerateNodeItems(node))
-			{
-				var itemSize = item.Measure(context);
-				size.Width = Math.Max(size.Width, itemSize.Width);
-				size.Height += GraphConstants.ItemSpacing + itemSize.Height;
-			}
-			
-			size.Width += GraphConstants.NodeExtraWidth;
-			return size;
-		}
 
 		public void RenderConnector(Graphics graphics, NodeConnector nodeConnector, RenderState renderState)
 		{
@@ -145,83 +127,6 @@ namespace Graph
 				graphics.FillPolygon(brush, GraphUtils.GetArrowPoints(x,y), FillMode.Winding);
 			}
 		}
-
-		public void PerformLayout(Graphics graphics, IEnumerable<Node> nodes)
-		{
-			foreach (var node in nodes.Reverse())
-			{
-				PerformLayout(graphics, node);
-			}
-		}
-
-		public void PerformLayout(Graphics graphics, Node node)
-		{
-		    if (node == null)
-		        return;
-		    var size = Measure(graphics, node);
-		    var position = node.Location;
-		    node.bounds = new RectangleF(position, size);
-
-		    const int connectorSize = GraphConstants.ConnectorSize;
-		    int halfConnectorSize = (int) Math.Ceiling(connectorSize/2.0f);
-		    var connectorOffset = (int) Math.Floor((GraphConstants.MinimumItemHeight - GraphConstants.ConnectorSize)/2.0f);
-		    var left = position.X + halfConnectorSize;
-		    var top = position.Y;
-		    var right = position.X + size.Width - halfConnectorSize;
-		    var bottom = position.Y + size.Height;
-
-		    node.inputConnectors.Clear();
-		    node.outputConnectors.Clear();
-		    //node.connections.Clear();
-
-		    var itemPosition = position;
-		    itemPosition.X += connectorSize + GraphConstants.HorizontalSpacing;
-		    node.inputBounds = Rectangle.Empty;
-		    node.outputBounds = Rectangle.Empty;
-
-		    foreach (var item in GraphUtils.EnumerateNodeItems(node))
-		    {
-                var itemSize = item.Measure(graphics);
-                item.bounds = new RectangleF(position, itemSize);
-
-		        var realHeight = itemSize.Height;
-		        var inputConnector = item.Input;
-		        if (inputConnector != null && inputConnector.Enabled)
-		        {
-		            if (itemSize.IsEmpty)
-		            {
-		                inputConnector.bounds = Rectangle.Empty;
-		            }
-		            else
-		            {
-		                inputConnector.bounds = new RectangleF(left - (GraphConstants.ConnectorSize/2),
-		                                                       itemPosition.Y + connectorOffset,
-		                                                       GraphConstants.ConnectorSize,
-		                                                       GraphConstants.ConnectorSize);
-		            }
-		            node.inputConnectors.Add(inputConnector);
-		        }
-		        var outputConnector = item.Output;
-		        if (outputConnector != null && outputConnector.Enabled)
-		        {
-		            if (itemSize.IsEmpty)
-		            {
-		                outputConnector.bounds = Rectangle.Empty;
-		            }
-		            else
-		            {
-		                outputConnector.bounds = new RectangleF(right - (GraphConstants.ConnectorSize/2),
-		                                                        itemPosition.Y + realHeight - (connectorOffset + GraphConstants.ConnectorSize),
-		                                                        GraphConstants.ConnectorSize,
-		                                                        GraphConstants.ConnectorSize);
-		            }
-		            node.outputConnectors.Add(outputConnector);
-		        }
-		        itemPosition.Y += itemSize.Height + GraphConstants.ItemSpacing;
-		    }
-		    node.itemsBounds = new RectangleF(left, top, right - left, bottom - top);
-		}
-
 	    public void RenderNode(Graphics graphics, Node node)
 	    {
 	        var size = node.bounds.Size;
@@ -268,7 +173,7 @@ namespace Graph
 	        var minimumItemSize = new SizeF(node.bounds.Width - GraphConstants.NodeExtraWidth, 0);
 	        foreach (var item in GraphUtils.EnumerateNodeItems(node))
 	        {
-                item.Render(graphics, minimumItemSize, position);
+                item.Render(graphics, minimumItemSize, itemPosition);
 	            var inputConnector = item.Input;
 	            if (inputConnector != null && inputConnector.Enabled)
 	            {
@@ -310,8 +215,10 @@ namespace Graph
 	    }
 
 
-	    public void RenderLabel(Graphics graphics, NodeConnection connection, PointF center, RenderState state)
+	    public void RenderLabel(Graphics graphics, NodeConnection connection, RenderState state)
 		{
+            var center = new PointF(0, 0);
+
 			using (var path = new GraphicsPath(FillMode.Winding))
 			{			
 				const int cornerSize = GraphConstants.CornerSize * 2;
@@ -368,9 +275,7 @@ namespace Graph
 			var x1 = (outputBounds.Left + outputBounds.Right) / 2.0f;
 			var y1 = (outputBounds.Top + outputBounds.Bottom) / 2.0f;
 			
-			float centerX;
-			float centerY;
-			using (var path = GraphUtils.GetArrowLinePath(x1, y1, x, y, out centerX, out centerY, true, 0.0f))
+			using (var path = GraphUtils.GetArrowLinePath(x1, y1, x, y, true, 0.0f))
 			{
 				using (var pen = new Pen(GetArrowLineColor(state), 4))
 				{
@@ -381,8 +286,7 @@ namespace Graph
 		
 		public void RenderInputConnection(Graphics graphics, NodeConnector input, float x, float y, RenderState state)
 		{
-			if (graphics == null || 
-				input == null)
+			if (graphics == null || input == null)
 				return;
 
 		    RectangleF inputBounds = input.bounds;
@@ -390,15 +294,11 @@ namespace Graph
 			var x2 = (inputBounds.Left + inputBounds.Right) / 2.0f;
 			var y2 = (inputBounds.Top + inputBounds.Bottom) / 2.0f;
 
-			float centerX;
-			float centerY;
-			using (var path = GraphUtils.GetArrowLinePath(x, y, x2, y2, out centerX, out centerY, true, 0.0f))
-			{
-				using (var pen = new Pen(GetArrowLineColor(state), 4))
-				{
-					graphics.DrawPath(pen, path);
-				}
-			}
+		    using (var path = GraphUtils.GetArrowLinePath(x, y, x2, y2, true))
+		    using (var pen = new Pen(GetArrowLineColor(state), 4))
+		    {
+		        graphics.DrawPath(pen, path);
+		    }
 		}
 
 
@@ -439,5 +339,27 @@ namespace Graph
                         else
                             return Color.LightGray;
         }
+
+	    public void RenderConnection(Graphics graphics, NodeConnection connection)
+	    {
+            var to = connection.To;
+            var from = connection.From;
+            RectangleF toBounds = to.bounds;
+            RectangleF fromBounds = @from.bounds;
+
+            var x1 = (fromBounds.Left + fromBounds.Right) / 2.0f;
+            var y1 = (fromBounds.Top + fromBounds.Bottom) / 2.0f;
+            var x2 = (toBounds.Left + toBounds.Right) / 2.0f;
+            var y2 = (toBounds.Top + toBounds.Bottom) / 2.0f;
+
+            using (var path = GraphUtils.GetArrowLinePath(x1, y1, x2, y2, false))
+            {
+                using (var brush = new SolidBrush(GetArrowLineColor(connection.state | RenderState.Connected)))
+                {
+                    graphics.DrawPath(new Pen(brush, 4), path);
+                }
+                connection.bounds = path.GetBounds();
+            }
+	    }
 	}
 }

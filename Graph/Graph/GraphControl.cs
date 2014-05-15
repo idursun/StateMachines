@@ -953,7 +953,7 @@ namespace Graph
 				e.Graphics.DrawRectangle(Pens.DarkGray, marque_rectangle.X, marque_rectangle.Y, marque_rectangle.Width, marque_rectangle.Height);
 			}
 
-			m_renderer.PerformLayout(e.Graphics, graphNodes);
+			PerformLayout(e.Graphics, graphNodes);
 			RenderNodes(e.Graphics, graphNodes, ShowLabels);
 			
 			if (command == CommandMode.Edit)
@@ -982,6 +982,101 @@ namespace Graph
 				}
 			}
 		}
+
+
+        public void PerformLayout(Graphics graphics, IEnumerable<Node> nodes)
+        {
+            foreach (var node in nodes.Reverse())
+            {
+                PerformLayout(graphics, node);
+            }
+        }
+
+        public void PerformLayout(Graphics graphics, Node node)
+        {
+            if (node == null)
+                return;
+            var size = Measure(graphics, node);
+            var position = node.Location;
+            node.bounds = new RectangleF(position, size);
+
+            const int connectorSize = GraphConstants.ConnectorSize;
+            int halfConnectorSize = (int)Math.Ceiling(connectorSize / 2.0f);
+            var connectorOffset = (int)Math.Floor((GraphConstants.MinimumItemHeight - GraphConstants.ConnectorSize) / 2.0f);
+            var left = position.X + halfConnectorSize;
+            var top = position.Y;
+            var right = position.X + size.Width - halfConnectorSize;
+            var bottom = position.Y + size.Height;
+
+            node.inputConnectors.Clear();
+            node.outputConnectors.Clear();
+
+            var itemPosition = position;
+            itemPosition.X += connectorSize + GraphConstants.HorizontalSpacing;
+            node.inputBounds = Rectangle.Empty;
+            node.outputBounds = Rectangle.Empty;
+
+            foreach (var item in GraphUtils.EnumerateNodeItems(node))
+            {
+                var itemSize = item.Measure(graphics);
+                item.bounds = new RectangleF(position, itemSize);
+
+                var realHeight = itemSize.Height;
+                var inputConnector = item.Input;
+                if (inputConnector != null && inputConnector.Enabled)
+                {
+                    if (itemSize.IsEmpty)
+                    {
+                        inputConnector.bounds = Rectangle.Empty;
+                    }
+                    else
+                    {
+                        inputConnector.bounds = new RectangleF(left - (GraphConstants.ConnectorSize / 2),
+                                                               itemPosition.Y + connectorOffset,
+                                                               GraphConstants.ConnectorSize,
+                                                               GraphConstants.ConnectorSize);
+                    }
+                    node.inputConnectors.Add(inputConnector);
+                }
+                var outputConnector = item.Output;
+                if (outputConnector != null && outputConnector.Enabled)
+                {
+                    if (itemSize.IsEmpty)
+                    {
+                        outputConnector.bounds = Rectangle.Empty;
+                    }
+                    else
+                    {
+                        outputConnector.bounds = new RectangleF(right - (GraphConstants.ConnectorSize / 2),
+                                                                itemPosition.Y + realHeight - (connectorOffset + GraphConstants.ConnectorSize),
+                                                                GraphConstants.ConnectorSize,
+                                                                GraphConstants.ConnectorSize);
+                    }
+                    node.outputConnectors.Add(outputConnector);
+                }
+                itemPosition.Y += itemSize.Height + GraphConstants.ItemSpacing;
+            }
+            node.itemsBounds = new RectangleF(left, top, right - left, bottom - top);
+        }
+
+        public SizeF Measure(Graphics context, Node node)
+        {
+            if (node == null)
+                return SizeF.Empty;
+
+            SizeF size = Size.Empty;
+            size.Height = //(int)NodeConstants.TopHeight + 
+                (int)GraphConstants.BottomHeight;
+            foreach (var item in GraphUtils.EnumerateNodeItems(node))
+            {
+                var itemSize = item.Measure(context);
+                size.Width = Math.Max(size.Width, itemSize.Width);
+                size.Height += GraphConstants.ItemSpacing + itemSize.Height;
+            }
+
+            size.Width += GraphConstants.NodeExtraWidth;
+            return size;
+        }
 		#endregion
 
 	    protected virtual void RenderNodes(Graphics graphics, IEnumerable<Node> nodes, bool showLabels)
@@ -1008,33 +1103,11 @@ namespace Graph
 
                 if (skipConnections.Add(connection))
                 {
-                    var to = connection.To;
-                    var from = connection.From;
-                    RectangleF toBounds = to.bounds;
-                    RectangleF fromBounds = @from.bounds;
+                    m_renderer.RenderConnection(graphics, connection);
 
-                    var x1 = (fromBounds.Left + fromBounds.Right) / 2.0f;
-                    var y1 = (fromBounds.Top + fromBounds.Bottom) / 2.0f;
-                    var x2 = (toBounds.Left + toBounds.Right) / 2.0f;
-                    var y2 = (toBounds.Top + toBounds.Bottom) / 2.0f;
-
-                    float centerX;
-                    float centerY;
-                    using (var path = GraphUtils.GetArrowLinePath(x1, y1, x2, y2, out centerX, out centerY, false))
+                    if (showLabels && !string.IsNullOrWhiteSpace(connection.Name))
                     {
-                        using (var brush = new SolidBrush(m_renderer.GetArrowLineColor(connection.state | RenderState.Connected)))
-                        {
-                            graphics.DrawPath(new Pen(brush, 4), path);
-                            //graphics.FillPath(brush, path);
-                        }
-                        connection.bounds = path.GetBounds();
-                    }
-
-                    if (showLabels &&
-                        !string.IsNullOrWhiteSpace(connection.Name))
-                    {
-                        var center = new PointF(centerX, centerY);
-                        m_renderer.RenderLabel(graphics, connection, center, connection.state);
+                        m_renderer.RenderLabel(graphics, connection, connection.state);
                     }
                 }
             }
@@ -1623,7 +1696,7 @@ namespace Graph
 					SetFlag(internalDragOverElement, RenderState.DraggedOver, false);
 					var node = GetElementNode(internalDragOverElement);
 					if (node != null)
-                        m_renderer.PerformLayout(this.CreateGraphics(), node);
+                        PerformLayout(this.CreateGraphics(), node);
 					needRedraw = true;
 				}
 
@@ -1634,7 +1707,7 @@ namespace Graph
 					SetFlag(internalDragOverElement, RenderState.DraggedOver, true);
 					var node = GetElementNode(internalDragOverElement);
 					if (node != null)
-                        m_renderer.PerformLayout(this.CreateGraphics(), node);
+                        PerformLayout(this.CreateGraphics(), node);
 					needRedraw = true;
 				}
 			}

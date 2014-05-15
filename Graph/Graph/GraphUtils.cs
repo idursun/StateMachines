@@ -32,28 +32,26 @@ static internal class GraphUtils
         var y2 = (toBounds.Top + toBounds.Bottom) / 2.0f;
 
         Region region;
-        float centerX;
-        float centerY;
-        using (var linePath = GetArrowLinePath(	x1, y1, x2, y2, out centerX, out centerY, true, 5.0f))
+        using (var linePath = GetArrowLinePath(	x1, y1, x2, y2, true, 5.0f))
         {
-            region = new Region((GraphicsPath) linePath);
+            region = new Region(linePath);
         }
         return region;
     }
 
-    public static GraphicsPath GetArrowLinePath(float x1, float y1, float x2, float y2, out float centerX, out float centerY, bool include_arrow, float extra_thickness = 0)
+    public static GraphicsPath GetArrowLinePath(float x1, float y1, float x2, float y2,  bool include_arrow, float extra_thickness = 0)
     {
-        var newPoints = GetArrowLinePoints(x1, y1, x2, y2, out centerX, out centerY, extra_thickness);
+        var newPoints = GetArrowLinePoints(x1, y1, x2, y2, extra_thickness);
 
         var path = new GraphicsPath(FillMode.Winding);
-        path.AddLines((PointF[]) newPoints.ToArray());
+        path.AddLines(newPoints.ToArray());
         //if (include_arrow)
         //    path.AddLines(GetArrowPoints(x2, y2, extra_thickness).ToArray());
         //path.CloseFigure();
         return path;
     }
 
-    public static List<PointF> GetArrowLinePoints(float x1, float y1, float x2, float y2, out float centerX, out float centerY, float extra_thickness = 0)
+    public static List<PointF> GetArrowLinePoints(float x1, float y1, float x2, float y2, float extra_thickness = 0)
     {
         var widthX	= (x2 - x1);
         var lengthX = Math.Max(60, Math.Abs(widthX / 2)) 
@@ -99,80 +97,7 @@ static internal class GraphUtils
             tempPath.Flatten();
             points = tempPath.PathPoints.ToList();
         }
-        centerX = 0;
-        centerY = 0;
         return points;
-        //*/
-        var angles	= new PointF[points.Count - 1];
-        var lengths = new float[points.Count - 1];
-        float totalLength = 0;
-        centerX = 0;
-        centerY = 0;
-        points.Add(points[points.Count - 1]);
-        for (int i = 0; i < points.Count - 2; i++)
-        {
-            var pt1 = points[i];
-            var pt2 = points[i + 1];
-            var pt3 = points[i + 2];
-            var deltaX = (float)((pt2.X - pt1.X) + (pt3.X - pt2.X));
-            var deltaY = (float)((pt2.Y - pt1.Y) + (pt3.Y - pt2.Y));
-            var length = (float)Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
-            if (length <= 1.0f)
-            {
-                points.RemoveAt(i);
-                i--;
-                continue;
-            }
-            lengths[i] = length;
-            totalLength += length;
-            angles[i].X = deltaX / length;
-            angles[i].Y = deltaY / length;
-        }
-
-        float midLength		= (totalLength / 2.0f);// * 0.75f;
-        float startWidth	= extra_thickness + 0.75f;
-        float endWidth		= extra_thickness + (GraphConstants.ConnectorSize / 3.5f);
-        float currentLength = 0;
-        var newPoints = new List<PointF>();
-        newPoints.Add(points[0]);
-
-        for (int i = 0; i < points.Count - 2; i++)
-        {
-            var angle	= angles[i];
-            var point	= points[i + 1];
-            var length	= lengths[i];
-            var width	= (((currentLength * (endWidth - startWidth)) / totalLength) + startWidth);
-            var angleX	= angle.X * width;
-            var angleY	= angle.Y * width;
-
-            var newLength = currentLength + length;
-            if (currentLength	<= midLength &&
-                newLength		>= midLength)
-            {
-                var dX = point.X - points[i].X;
-                var dY = point.Y - points[i].Y;
-                var t1 = midLength - currentLength;
-                var l  = length;
-
-
-
-                centerX = points[i].X + ((dX * t1) / l);
-                centerY = points[i].Y + ((dY * t1) / l);
-            }
-
-            var pt1 = new PointF(point.X - angleY, point.Y + angleX);
-            var pt2 = new PointF(point.X + angleY, point.Y - angleX);
-            if (Math.Abs(newPoints[newPoints.Count - 1].X - pt1.X) > 1.0f ||
-                Math.Abs(newPoints[newPoints.Count - 1].Y - pt1.Y) > 1.0f)
-                newPoints.Add(pt1);
-            if (Math.Abs(newPoints[0].X - pt2.X) > 1.0f ||
-                Math.Abs(newPoints[0].Y - pt2.Y) > 1.0f)
-                newPoints.Insert(0, pt2);
-
-            currentLength = newLength;
-        }
-
-        return newPoints;
     }
 
     public static PointF[] GetArrowPoints(float x, float y, float extra_thickness = 0)
