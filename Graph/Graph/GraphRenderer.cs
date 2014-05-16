@@ -156,8 +156,10 @@ namespace Graph
                 Color borderColor = Color.FromArgb(64, 64, 64);
                 if (node.state.HasFlag(RenderState.Focus) && node.state.HasFlag(RenderState.Dragging))
 	                borderColor = Color.Yellow;
-	            else if ((node.state & RenderState.Hover) == RenderState.Hover)
-	                borderColor = Color.Orange;
+                //else if ((node.state & RenderState.Hover) == RenderState.Hover)
+                //    borderColor = Color.Orange;
+	            else if ((node.state & RenderState.Focus) == RenderState.Focus)
+	                borderColor = Color.Yellow;
 
 	            using (Pen pen = new Pen(borderColor, 2))
                 {
