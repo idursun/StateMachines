@@ -77,7 +77,8 @@
     <Compile Include="Nodes\Logic\GreaterThanFunctionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Nodes\Logic\BranchExecutionTests.cs" />
-    <Compile Include="WorkflowEventReceiverTests.cs" />
+    <Compile Include="Events\WorkflowEventPublishingTests.cs" />
+    <Compile Include="Events\WorkflowEventReceiverTests.cs" />
     <Compile Include="WorkflowExecutionContextTests.cs" />
     <Compile Include="WorkflowNodeTests.cs" />
     <Compile Include="WorkflowBuilderTests.cs" />
