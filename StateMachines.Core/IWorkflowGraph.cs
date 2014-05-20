@@ -7,7 +7,6 @@ namespace StateMachines.Core
     public interface IWorkflowGraph
     {
         IEnumerable<Pin> GetConnectedPins(Pin input);
-        IEnumerable<WorkflowEventReceiver> EventSinksNodes();
-        WorkflowNode FindNodeByGUID(Guid nodeGuid);
+        IEnumerable<WorkflowEventReceiver> EventSinkNodes();
     }
 }

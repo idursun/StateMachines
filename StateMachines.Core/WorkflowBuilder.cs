@@ -5,7 +5,7 @@ using StateMachines.Core.Events;
 
 namespace StateMachines.Core
 {
-    public class WorkflowBuilder : IWorkflowGraph
+    public class WorkflowBuilder
     {
         public WorkflowBuilder()
         {
@@ -59,28 +59,38 @@ namespace StateMachines.Core
             {
                 flowConnection.Item1.Set(flowConnection.Item2);
             }
-            return new WorkflowExecutionContext(this);
+            return new WorkflowExecutionContext(new WorkflowGraphMemo(Nodes.ToArray(),Connections.ToArray()));
         }
 
-        public IEnumerable<Pin> GetConnectedPins(Pin input)
+        /// <summary>
+        /// Preserves the state of the graph for context to work for further modifications
+        /// </summary>
+        class WorkflowGraphMemo : IWorkflowGraph
         {
-            foreach (var connection in Connections)
+            private readonly WorkflowNode[] m_workflowNodes;
+            private readonly Tuple<Pin, Pin>[] m_connections;
+
+            protected internal WorkflowGraphMemo(WorkflowNode[] workflowNodes, Tuple<Pin, Pin>[] connections)
             {
-                if (connection.Item1 == input)
-                    yield return connection.Item2;
-                if (connection.Item2 == input)
-                    yield return connection.Item1;
+                m_workflowNodes = workflowNodes;
+                m_connections = connections;
             }
-        }
 
-        public IEnumerable<WorkflowEventReceiver> EventSinksNodes()
-        {
-            return Nodes.Where(x => x is WorkflowEventReceiver).Cast<WorkflowEventReceiver>().ToList();
-        }
+            public IEnumerable<Pin> GetConnectedPins(Pin input)
+            {
+                foreach (var connection in m_connections)
+                {
+                    if (connection.Item1 == input)
+                        yield return connection.Item2;
+                    if (connection.Item2 == input)
+                        yield return connection.Item1;
+                }
+            }
 
-        public WorkflowNode FindNodeByGUID(Guid nodeGuid)
-        {
-            return Nodes.FirstOrDefault(x => x.Guid == nodeGuid);
+            public IEnumerable<WorkflowEventReceiver> EventSinkNodes()
+            {
+                return m_workflowNodes.Where(x => x is WorkflowEventReceiver).Cast<WorkflowEventReceiver>().ToList();
+            }
         }
     }
 }
