@@ -61,10 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContextVariable.cs" />
+    <Compile Include="ContextVariableKey.cs" />
     <Compile Include="Debugging\IDebugger.cs" />
     <Compile Include="IExecutable.cs" />
-    <Compile Include="InitializeEventReceiver.cs" />
+    <Compile Include="Events\InitializeEventReceiver.cs" />
     <Compile Include="InvalidWorkflowStateException.cs" />
     <Compile Include="IWorkflowExecutionContext.cs" />
     <Compile Include="IWorkflowGraph.cs" />

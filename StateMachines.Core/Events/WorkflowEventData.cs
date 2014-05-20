@@ -2,6 +2,6 @@
 {
     public class WorkflowEventData
     {
-        public static readonly WorkflowEventData Empty = new WorkflowEventData();
+        public static readonly WorkflowEventData Start = new WorkflowEventData();
     }
 }

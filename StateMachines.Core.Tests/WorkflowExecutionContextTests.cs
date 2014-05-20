@@ -41,7 +41,7 @@ namespace StateMachines.Core.Tests
         public void Test_PublishEvent_ProvidesInputValues()
         {
             var executionContext = m_workflowBuilder.Compile();
-            executionContext.PublishEvent(WorkflowEventData.Empty);
+            executionContext.PublishEvent(WorkflowEventData.Start);
             executionContext.Run();
 
             Assert.That(m_executionNode.Output, Is.EqualTo("Hello World !!!"), "Message is not correct");

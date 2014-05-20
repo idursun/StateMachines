@@ -146,7 +146,7 @@ namespace StateMachines.Designer
             try
             {
                 var executionContext = graphControl1.Compile();
-                executionContext.PublishEvent(WorkflowEventData.Empty);
+                executionContext.PublishEvent(WorkflowEventData.Start);
                 executionContext.Run();
             }
             catch (Exception exception)

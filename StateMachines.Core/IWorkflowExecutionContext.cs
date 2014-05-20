@@ -6,12 +6,14 @@ namespace StateMachines.Core
 {
     public interface IWorkflowExecutionContext
     {
+        ExecutionState State { get; }
+
         void Execute(IExecutable node);
-        void PublishEvent<TEvent>(TEvent workflowEventData) where TEvent : WorkflowEventData;
-        void Attach(IDebugger debugger);
         void Run();
         void Resume(WorkflowStateData stateData);
-        ExecutionState State { get; }
+        void PublishEvent<TEvent>(TEvent workflowEventData) where TEvent : WorkflowEventData;
+
+        void Attach(IDebugger debugger);
         void SetBreakpoint(IExecutable executable);
         void RemoveBreakpoint(IExecutable executable);
     }

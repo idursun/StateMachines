@@ -2,12 +2,12 @@
 
 namespace StateMachines.Core
 {
-    public struct ContextVariable
+    public struct ContextVariableKey
     {
         public Guid NodeGuid;
         public string PinName;
 
-        public bool Equals(ContextVariable other)
+        public bool Equals(ContextVariableKey other)
         {
             return NodeGuid.Equals(other.NodeGuid) && string.Equals(PinName, other.PinName);
         }
@@ -18,7 +18,7 @@ namespace StateMachines.Core
             {
                 return false;
             }
-            return obj is ContextVariable && Equals((ContextVariable) obj);
+            return obj is ContextVariableKey && Equals((ContextVariableKey) obj);
         }
 
         public override int GetHashCode()

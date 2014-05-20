@@ -1,6 +1,4 @@
-﻿using StateMachines.Core.Events;
-
-namespace StateMachines.Core
+﻿namespace StateMachines.Core.Events
 {
     public class InitializeEventReceiver : WorkflowEventReceiver
     {
