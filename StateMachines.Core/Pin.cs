@@ -7,6 +7,8 @@ namespace StateMachines.Core
     [DebuggerDisplay("{Node}::{Name}")]
     public class Pin 
     {
+        private readonly PropertyInfo m_propertyInfo;
+
         public Pin(PropertyInfo propertyInfo)
         {
             m_propertyInfo = propertyInfo;
@@ -61,8 +63,6 @@ namespace StateMachines.Core
         {
             return m_propertyInfo.PropertyType;
         }
-
-        private readonly PropertyInfo m_propertyInfo;
     }
 
     public enum PinType

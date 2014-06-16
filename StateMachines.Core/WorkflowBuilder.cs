@@ -18,37 +18,6 @@ namespace StateMachines.Core
         public List<Tuple<Pin, Pin>> Connections { get; private set; }
         public List<Tuple<Pin, IExecutable>> FlowConnections { get; private set; }
 
-        /// <summary>
-        /// Preserves the state of the graph for context to work for further modifications
-        /// </summary>
-        class WorkflowGraphMemo : IWorkflowGraph
-        {
-            private readonly WorkflowNode[] m_workflowNodes;
-            private readonly Tuple<Pin, Pin>[] m_connections;
-
-            protected internal WorkflowGraphMemo(WorkflowNode[] workflowNodes, Tuple<Pin, Pin>[] connections)
-            {
-                m_workflowNodes = workflowNodes;
-                m_connections = connections;
-            }
-
-            public IEnumerable<Pin> GetConnectedPins(Pin input)
-            {
-                foreach (var connection in m_connections)
-                {
-                    if (connection.Item1 == input)
-                        yield return connection.Item2;
-                    if (connection.Item2 == input)
-                        yield return connection.Item1;
-                }
-            }
-
-            public IEnumerable<WorkflowEventReceiver> EventSinkNodes()
-            {
-                return m_workflowNodes.Where(x => x is WorkflowEventReceiver).Cast<WorkflowEventReceiver>().ToList();
-            }
-        }
-
         public void Add(WorkflowNode node)
         {
             if (node.Guid == Guid.Empty)
@@ -93,6 +62,35 @@ namespace StateMachines.Core
             return new WorkflowExecutionContext(new WorkflowGraphMemo(Nodes.ToArray(),Connections.ToArray()));
         }
 
-      
+        /// <summary>
+        /// Preserves the state of the graph for context to work for further modifications
+        /// </summary>
+        class WorkflowGraphMemo : IWorkflowGraph
+        {
+            private readonly WorkflowNode[] m_workflowNodes;
+            private readonly Tuple<Pin, Pin>[] m_connections;
+
+            protected internal WorkflowGraphMemo(WorkflowNode[] workflowNodes, Tuple<Pin, Pin>[] connections)
+            {
+                m_workflowNodes = workflowNodes;
+                m_connections = connections;
+            }
+
+            public IEnumerable<Pin> GetConnectedPins(Pin input)
+            {
+                foreach (var connection in m_connections)
+                {
+                    if (connection.Item1 == input)
+                        yield return connection.Item2;
+                    if (connection.Item2 == input)
+                        yield return connection.Item1;
+                }
+            }
+
+            public IEnumerable<WorkflowEventReceiver> EventSinkNodes()
+            {
+                return m_workflowNodes.Where(x => x is WorkflowEventReceiver).Cast<WorkflowEventReceiver>().ToList();
+            }
+        }
     }
 }
