@@ -5,7 +5,7 @@ using EventMachine.Core.Events;
 
 namespace EventMachine.Core
 {
-    public class WorkflowBuilder
+    public class WorkflowBuilder : IWorkflowBuilder
     {
         public WorkflowBuilder()
         {
@@ -29,28 +29,38 @@ namespace EventMachine.Core
             Nodes.Add(node);
         }
 
-        public void Connect(Pin pin1, Pin pin2)
+        public IWorkflowBuilder Connect(Pin pin1, Pin pin2)
         {
             if (pin1 == null) throw new ArgumentNullException("pin1");
             if (pin2 == null) throw new ArgumentNullException("pin2");
             if (!Nodes.Contains(pin1.Node))
-                throw new Exception("node for pin1 is not added");
+            {
+                Add(pin1.Node);
+            }
             if (!Nodes.Contains(pin2.Node))
-                throw new Exception("node for pin2 is not added");
+            {
+                Add(pin2.Node);
+            }
 
             Connections.Add(Tuple.Create(pin1, pin2));
+            return this;
         }
 
-        public void Connect(Pin pin1, IExecutable executable)
+        public IWorkflowBuilder Connect(Pin pin1, IExecutable executable)
         {
             if (pin1 == null) throw new ArgumentNullException("pin1");
             if (executable == null) throw new ArgumentNullException("executable");
             if (!Nodes.Contains(pin1.Node))
-                throw new Exception("node for pin1 is not added");
+            {
+                Add(pin1.Node);
+            }
             if (!Nodes.Contains(executable as WorkflowNode))
-                throw new Exception("node for pin2 is not added");
+            {
+                Add(executable as WorkflowNode);
+            }
 
             FlowConnections.Add(Tuple.Create(pin1, executable));
+            return this;
         }
 
         public IWorkflowExecutionContext Compile()

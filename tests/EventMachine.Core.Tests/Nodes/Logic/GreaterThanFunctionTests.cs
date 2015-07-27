@@ -45,26 +45,18 @@ namespace EventMachine.Core.Tests.Nodes.Logic
             var dummyExecutionNode = new DummyExecutionNode();
             var initializeEventReceiver = new InitializeEventReceiver();
 
-            WorkflowBuilder builder = new WorkflowBuilder();
-            builder.Add(initializeEventReceiver);
-            builder.Add(function);
-            builder.Add(intValue1);
-            builder.Add(intValue2);
+            var builder = new WorkflowBuilder()
+                .Connect(function.Pin(x => x.A), intValue1.Pin(x => x.Value))
+                .Connect(function.Pin(x => x.B), intValue2.Pin(x => x.Value))
+                .Connect(function.Pin(x => x.Result), dummyExecutionNode.Pin(x => x.R))
+                .Connect(initializeEventReceiver.Pin(x => x.Fired), dummyExecutionNode);
 
-            builder.Add(dummyExecutionNode);
-
-            builder.Connect(function.Pin(x => x.A), intValue1.Pin(x => x.Value));
-            builder.Connect(function.Pin(x => x.B), intValue2.Pin(x => x.Value));
-            builder.Connect(function.Pin(x => x.Result), dummyExecutionNode.Pin(x => x.R));
-            builder.Connect(initializeEventReceiver.Pin(x => x.Fired), dummyExecutionNode);
-
-            IWorkflowExecutionContext context = builder.Compile();
+            var context = builder.Compile();
             context.PublishEvent(new WorkflowEventData());
             context.Run();
             return function;
         }
     }
-
 
     public class DummyExecutionNode : WorkflowExecutionNode
     {

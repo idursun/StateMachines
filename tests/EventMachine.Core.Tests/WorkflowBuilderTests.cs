@@ -16,13 +16,11 @@ namespace EventMachine.Core.Tests
         }
 
         [Test]
-        public void Test_Connect_ThrowsIfNodeIsNotAdded()
+        public void Test_Connect_AddsNode()
         {
-            MakeMessageNode node = new MakeMessageNode();
-            Assert.That(delegate
-            {
-                m_workflowBuilder.Connect(node.Pin(x => x.Input), node.Pin(x => x.Input));
-            }, Throws.Exception);
+            var node = new MakeMessageNode();
+            m_workflowBuilder.Connect(node.Pin(x => x.Input), node.Pin(x => x.Input));
+            Assert.That(m_workflowBuilder.Nodes.Contains(node));
         }
 
         [Test]
@@ -44,7 +42,7 @@ namespace EventMachine.Core.Tests
             makeMessageNode2.Guid = newGuid;
 
             m_workflowBuilder.Add(makeMessageNode1);
-            Assert.That(() => m_workflowBuilder.Add(makeMessageNode2), Throws.Exception); 
+            Assert.That(() => m_workflowBuilder.Add(makeMessageNode2), Throws.Exception);
         }
 
     }
