@@ -66,6 +66,7 @@
     <Compile Include="IExecutable.cs" />
     <Compile Include="Events\InitializeEventReceiver.cs" />
     <Compile Include="InvalidWorkflowStateException.cs" />
+    <Compile Include="IWorkflowBuilder.cs" />
     <Compile Include="IWorkflowExecutionContext.cs" />
     <Compile Include="IWorkflowGraph.cs" />
     <Compile Include="Nodes\Consts\ConstValueFunction.cs" />

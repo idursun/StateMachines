@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using Graph;
 using Graph.Items;
 using EventMachine.Core;
@@ -40,7 +42,12 @@ namespace EventMachine.Designer
                 Guid toNode = nodeToGuid[connection.To.Node];
                 if (toItem.Text == "Exec")
                 {
-                    builder.Connect(nodes[fromNode].Pin(fromItem.Text), nodes[toNode] as IExecutable);
+                    //builder.Connect(nodes[fromNode].Pin(fromItem.Text), nodes[toNode] as IExecutable);
+                    var type = nodes[fromNode].GetType();
+                    var propertyInfo = type.GetProperty(fromItem.Text);
+                    nodes[fromNode].GetType().GetProperty(fromItem.Text).GetValue(nodes[fromNode])
+                    Expression.MakeMemberAccess(nodes[fromNode],)
+                    builder.Connect(Expression.MakeMemberAccess( ) nodes[fromNode].Pin(fromItem.Text), nodes[toNode] as IExecutable);
                 }
                 else
                 {

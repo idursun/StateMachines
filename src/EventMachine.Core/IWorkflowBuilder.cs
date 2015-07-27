@@ -1,9 +1,11 @@
-﻿namespace EventMachine.Core
+﻿using System;
+
+namespace EventMachine.Core
 {
     public interface IWorkflowBuilder
     {
-        IWorkflowBuilder Connect(Pin pin1, Pin pin2);
-        IWorkflowBuilder Connect(Pin pin1, IExecutable executable);
+        IWorkflowBuilder Connect<T, R>(Func<WorkflowNode, T> pin1, Func<WorkflowNode, R> pin2);
+        IWorkflowBuilder Connect(Func<WorkflowNode, IExecutable> pin1, WorkflowExecutionNode node);
         IWorkflowExecutionContext Compile();
     }
 }

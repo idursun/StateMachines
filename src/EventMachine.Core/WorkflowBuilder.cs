@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using EventMachine.Core.Events;
 
 namespace EventMachine.Core
@@ -29,39 +30,49 @@ namespace EventMachine.Core
             Nodes.Add(node);
         }
 
-        public IWorkflowBuilder Connect(Pin pin1, Pin pin2)
-        {
-            if (pin1 == null) throw new ArgumentNullException("pin1");
-            if (pin2 == null) throw new ArgumentNullException("pin2");
-            if (!Nodes.Contains(pin1.Node))
-            {
-                Add(pin1.Node);
-            }
-            if (!Nodes.Contains(pin2.Node))
-            {
-                Add(pin2.Node);
-            }
+        //public IWorkflowBuilder Connect(Pin pin1, Pin pin2)
+        //{
+        //    if (pin1 == null) throw new ArgumentNullException("pin1");
+        //    if (pin2 == null) throw new ArgumentNullException("pin2");
+        //    if (!Nodes.Contains(pin1.Node))
+        //    {
+        //        Add(pin1.Node);
+        //    }
+        //    if (!Nodes.Contains(pin2.Node))
+        //    {
+        //        Add(pin2.Node);
+        //    }
 
-            Connections.Add(Tuple.Create(pin1, pin2));
+        //    Connections.Add(Tuple.Create(pin1, pin2));
+        //    return this;
+        //}
+
+        public IWorkflowBuilder Connect<T,R>(Func<WorkflowNode, T> pin1, Func<WorkflowNode, R> pin2)
+        {
             return this;
         }
 
-        public IWorkflowBuilder Connect(Pin pin1, IExecutable executable)
+        public IWorkflowBuilder Connect(Func<WorkflowNode, IExecutable> pin1, WorkflowExecutionNode node)
         {
-            if (pin1 == null) throw new ArgumentNullException("pin1");
-            if (executable == null) throw new ArgumentNullException("executable");
-            if (!Nodes.Contains(pin1.Node))
-            {
-                Add(pin1.Node);
-            }
-            if (!Nodes.Contains(executable as WorkflowNode))
-            {
-                Add(executable as WorkflowNode);
-            }
-
-            FlowConnections.Add(Tuple.Create(pin1, executable));
             return this;
         }
+
+        //public IWorkflowBuilder Connect(Pin pin1, IExecutable executable)
+        //{
+        //    if (pin1 == null) throw new ArgumentNullException("pin1");
+        //    if (executable == null) throw new ArgumentNullException("executable");
+        //    if (!Nodes.Contains(pin1.Node))
+        //    {
+        //        Add(pin1.Node);
+        //    }
+        //    if (!Nodes.Contains(executable as WorkflowNode))
+        //    {
+        //        Add(executable as WorkflowNode);
+        //    }
+
+        //    FlowConnections.Add(Tuple.Create(pin1, executable));
+        //    return this;
+        //}
 
         public IWorkflowExecutionContext Compile()
         {

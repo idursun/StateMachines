@@ -12,28 +12,28 @@ namespace EventMachine.Core.Tests.Nodes.Logic
         [Test]
         public void Test_Evaluate_HandlesInteger()
         {
-            GreaterThanFunction function = BuildAndRunWorkflow(10, 5); ;
+            var function = BuildAndRunWorkflow(10, 5); ;
             Assert.That(function.Result, Is.True);
         }
 
         [Test]
         public void Test_Evaluate_HandlesDouble()
         {
-            GreaterThanFunction function = BuildAndRunWorkflow(10.0d, 5.0d); ;
+            var function = BuildAndRunWorkflow(10.0d, 5.0d); ;
             Assert.That(function.Result, Is.True);
         }
 
         [Test]
         public void Test_Evaluate_HandlesFloat()
         {
-            GreaterThanFunction function = BuildAndRunWorkflow(10.0f, 5.0f); ;
+            var function = BuildAndRunWorkflow(10.0f, 5.0f); ;
             Assert.That(function.Result, Is.True);
         }
 
         [Test]
         public void Test_Evaluate_HandlesByte()
         {
-            GreaterThanFunction function = BuildAndRunWorkflow<byte>(10, 1); ;
+            var function = BuildAndRunWorkflow<byte>(10, 1); ;
             Assert.That(function.Result, Is.True);
         }
 
@@ -46,10 +46,10 @@ namespace EventMachine.Core.Tests.Nodes.Logic
             var initializeEventReceiver = new InitializeEventReceiver();
 
             var builder = new WorkflowBuilder()
-                .Connect(function.Pin(x => x.A), intValue1.Pin(x => x.Value))
-                .Connect(function.Pin(x => x.B), intValue2.Pin(x => x.Value))
-                .Connect(function.Pin(x => x.Result), dummyExecutionNode.Pin(x => x.R))
-                .Connect(initializeEventReceiver.Pin(x => x.Fired), dummyExecutionNode);
+                .Connect(_ => intValue1.Value, _ => function.A)
+                .Connect(_ => intValue2.Value, _ => function.B)
+                .Connect(_ => function.Result, _ => dummyExecutionNode.R)
+                .Connect(_ => initializeEventReceiver.Fired, dummyExecutionNode);
 
             var context = builder.Compile();
             context.PublishEvent(new WorkflowEventData());
